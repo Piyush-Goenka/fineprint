@@ -3,21 +3,22 @@
 // is a small custom listbox: the trigger and every row show the provider's real mark
 // (ProviderIcon) beside the model name. No rank/price metadata — just the logo and the name.
 import { useEffect, useRef, useState } from "react";
-import { byId } from "@/lib/data";
 import { ProviderIcon } from "@/components/provider-icon";
+import type { OpenRouterModel } from "@/lib/market-data";
 
-function resolve(id: string) {
-  const m = byId(id);
-  // Fallback if a playground id isn't on the published board yet: brand from the id's lab prefix.
-  return { id, label: m?.label ?? id, brand: m?.brand ?? id.split(/[-/]/)[0] };
+function resolve(models: OpenRouterModel[], id: string) {
+  const m = models.find((item) => item.id === id);
+  return { id, label: m?.label ?? id, brand: m?.creator ?? id.split(/[-/]/)[0] };
 }
 
-export function ModelPicker({ ids, value, onChange }: {
-  ids: string[]; value: string; onChange: (id: string) => void;
+export function ModelPicker({ models, value, onChange }: {
+  models: OpenRouterModel[]; value: string; onChange: (id: string) => void;
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-  const sel = resolve(value);
+  const sel = resolve(models, value);
+  const [query, setQuery] = useState("");
+  const filtered = models.filter((m) => `${m.label} ${m.creator}`.toLowerCase().includes(query.toLowerCase()));
 
   useEffect(() => {
     if (!open) return;
@@ -42,8 +43,10 @@ export function ModelPicker({ ids, value, onChange }: {
       {open && (
         <ul role="listbox" aria-label="Model"
           className="absolute left-0 sm:left-auto sm:right-0 z-30 mt-1.5 w-full min-w-[248px] max-w-[min(100vw-2rem,248px)] max-h-[300px] overflow-auto rounded-xl border border-line bg-surface p-1 shadow-xl">
-          {ids.map((id) => {
-            const m = resolve(id);
+          <li className="sticky top-0 bg-surface p-1"><input autoFocus value={query} onChange={(e) => setQuery(e.target.value)} placeholder={`Search ${models.length} OpenRouter models…`} aria-label="Search OpenRouter models" className="w-full rounded-md border border-line bg-surface px-2 py-1.5 text-[12px] outline-none" /></li>
+          {filtered.map((item) => {
+            const id = item.id;
+            const m = resolve(models, id);
             const on = id === value;
             return (
               <li key={id} role="option" aria-selected={on}>
@@ -60,6 +63,7 @@ export function ModelPicker({ ids, value, onChange }: {
               </li>
             );
           })}
+          {!filtered.length && <li className="px-3 py-2 text-[12px] text-muted">No models found.</li>}
         </ul>
       )}
     </div>

@@ -155,9 +155,9 @@ def all_models() -> list[dict]:
 # ── playground ───────────────────────────────────────────────────────────────
 PLAYGROUND_MODELS = os.environ.get(
     "FINEPRINT_PLAYGROUND_MODELS",
-    "gpt-5.5,claude-fable-5,grok-4.6,gemini-3.5-flash-lite,gpt-5.6-luna,deepseek-v3.2",
+    "openai/gpt-5.5,anthropic/claude-fable-5,x-ai/grok-4.6,google/gemini-3.5-flash-lite,openai/gpt-5.6-luna,deepseek/deepseek-v3.2",
 ).split(",")
-PLAYGROUND_DEFAULT_MODEL = os.environ.get("FINEPRINT_PLAYGROUND_DEFAULT", "gpt-5.5")
+PLAYGROUND_DEFAULT_MODEL = os.environ.get("FINEPRINT_PLAYGROUND_DEFAULT", "openai/gpt-5.5")
 SAMPLE_DIR = Path(os.environ.get("FINEPRINT_SAMPLE_DIR", HERE / "playground" / "samples"))
 SITE_ORIGINS = os.environ.get(
     "FINEPRINT_SITE_ORIGINS", "https://fineprint.flexprice.io,http://localhost:3000,http://localhost:3200",

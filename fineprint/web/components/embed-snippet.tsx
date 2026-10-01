@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 
-const SNIPPET = `<iframe src="https://fineprint.bench/embed" width="100%" height="480" style="border:1px solid #23252a;border-radius:12px"></iframe>`;
+const SNIPPET = `<iframe src="https://fineprint.flexprice.io/embed" width="100%" height="480" style="border:1px solid #23252a;border-radius:12px"></iframe>`;
 
-// "Embed" affordance for the home leaderboard — reveals the iframe snippet for copy.
+// "Embed" affordance for the external model rankings — reveals the iframe snippet for copy.
 export function EmbedSnippet() {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);

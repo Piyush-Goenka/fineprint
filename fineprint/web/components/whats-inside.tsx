@@ -38,7 +38,7 @@ const STEPS = [
   { t: "Contract in", d: "Real PDF, numbered OCR lines.", icon: ICON.contract, Visual: StepContractVisual },
   { t: "Model reads it", d: "Structured billing schema.", icon: ICON.model, Visual: StepModelVisual },
   { t: "Private key check", d: "Each field vs the answer key.", icon: ICON.check, Visual: StepCheckVisual },
-  { t: "On the leaderboard", d: "Accuracy, cost, and speed.", icon: ICON.board, Visual: StepBoardVisual },
+  { t: "Published benchmark", d: "The original accuracy, cost, and speed results.", icon: ICON.board, Visual: StepBoardVisual },
 ] as const;
 
 function StepsClassic() {
@@ -84,9 +84,9 @@ function StepsVisual() {
 export function WhatsInside() {
   return (
     <section id="inside" className="shell pt-10 sm:pt-14 pb-12 sm:pb-16">
-      <p className="eyebrow mb-3">How we measure</p>
+      <p className="eyebrow mb-3">Contract evaluation methodology</p>
       <h2 className="display text-[clamp(1.9rem,4.2vw,2.6rem)] max-w-[20ch]">
-        How a model gets a score.
+        How FinePrint’s evaluation works.
       </h2>
 
       {VISUAL_STEPS ? <StepsVisual /> : <StepsClassic />}
@@ -107,8 +107,8 @@ export function WhatsInside() {
           <div className="fp-measure-copy">
             <div className="text-[15px] font-medium tracking-[-.01em]">Answers stay private</div>
             <p className="mt-2 text-[13.5px] leading-relaxed text-muted">
-              Every field is hand-labeled. Those labels never ship; only the scores do. That keeps
-              the benchmark honest.
+              Every field is hand-labeled. Those labels never ship; they define the FinePrint
+              methodology and keep the extraction evaluation honest.
             </p>
           </div>
         </div>

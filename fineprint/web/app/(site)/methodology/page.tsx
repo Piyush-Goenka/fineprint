@@ -8,11 +8,12 @@ import {
 } from "@/components/methodology-sections";
 import { MethodologyBillingSchema } from "@/components/methodology-billing-schema";
 import { MethodologyFieldScoring } from "@/components/methodology-field-scoring";
+import { marketData } from "@/lib/market-data";
 
 export const metadata: Metadata = {
   title: "Methodology",
   description:
-    "How FinePrint scores models on contract extraction: the task, dataset, metrics, and field-level rubric.",
+    "FinePrint's contract extraction task, dataset, metrics, and field-level rubric, alongside Flexprice Model Intelligence metrics.",
 };
 
 function Eyebrow({ children }: { children: React.ReactNode }) {
@@ -49,10 +50,10 @@ export default function Methodology() {
   return (
     <div className="shell py-14">
       <Eyebrow>Methodology</Eyebrow>
-      <h1 className="display text-[clamp(2rem,5vw,3rem)] max-w-[16ch]">How we score models.</h1>
+      <h1 className="display text-[clamp(2rem,5vw,3rem)] max-w-[16ch]">How FinePrint scores contract extraction.</h1>
       <p className="fp-meth-hero-lead">
-        We score one thing: can a model read a contract and get the billing terms right?
-        Here is how we test it, judge each field, and keep improving.
+        FinePrint's contract methodology measures whether a model reads billing terms correctly.
+        Flexprice Model Intelligence provides a broader view of model capability, preference, and adoption.
       </p>
 
       <section className="fp-meth-section fp-why-section">
@@ -186,8 +187,8 @@ export default function Methodology() {
           <div className="rounded-xl border border-line bg-surface px-5 py-5">
             <div className="text-[15px] font-medium tracking-[-.01em]">Open</div>
             <p className="mt-1.5 text-[13px] text-muted leading-relaxed">
-              Harness, adapters, scorer, and aggregation are open source. Pricing comes from
-              OpenRouter. Only the corpus and labels stay private.
+              The extraction harness, adapters, and field-level rubric are open source. Only the
+              contract corpus and labels stay private.
             </p>
           </div>
           <div className="rounded-xl border border-line bg-surface px-5 py-5">
@@ -199,6 +200,17 @@ export default function Methodology() {
           </div>
         </div>
       </section>
+
+      <p className="text-[11px] text-faint">
+        Data acknowledgement: Source: OpenRouter (openrouter.ai/rankings), as of {marketData.as_of.slice(0, 10)}. Used under CC BY 4.0.
+      </p>
+      <div className="mt-4 max-w-[85ch] text-[11px] leading-relaxed text-faint space-y-2">
+        <p>Flexprice Model Intelligence scores each distinct OpenRouter chat model on the same 0–100 scale. Moving aliases and routers stay in the playground picker because they do not identify one stable model.</p>
+        <p><b>Capability:</b> We use the published Artificial Analysis Intelligence Index when a model has one. Otherwise, a fixed model-card score uses context length (25 points), maximum output length (15), image input (10), file input (5), tool use (10), structured output (10), and reasoning support (10). That 85-point feature score is scaled to 100 and calibrated against models with published Intelligence Index values using a linear fit with 15% slope shrinkage. Text-capable models receive a 10-point floor. This is an estimate of the model&apos;s feature envelope, not a measured intelligence result.</p>
+        <p><b>Preference:</b> We log-scale the number of public OpenRouter requests per model. When an Arena rating exists, preference is 70% of its normalized rating plus 30% of the request score; otherwise it is the request score. This combines developer selection with direct human comparisons where available. It does not claim that request volume equals an Arena vote.</p>
+        <p><b>Adoption:</b> We log-scale public OpenRouter token volume over its monthly window. A model absent from the published activity feed receives zero for request activity and adoption until it appears there.</p>
+        <p><b>Index:</b> 40% capability + 35% preference + 25% adoption. The formula is fixed for every model. Scores are relative to the current catalog and published activity, so they can move when the comparison set changes. The Index does not measure contract extraction accuracy.</p>
+      </div>
 
       <div className="fp-meth-footer flex items-center justify-between gap-4">
         <Link href="/#leaderboard" className="btn btn-ghost">Back to the leaderboard</Link>

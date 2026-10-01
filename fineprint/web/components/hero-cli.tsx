@@ -1,9 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { REPO_URL } from "@/components/site-nav";
 
-const CMD = "python -m fineprint.eval <model>";
+const CMD = "python -m fineprint.market_data";
 
 const CopyIcon = () => (
   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
@@ -31,8 +30,6 @@ export function HeroCli() {
     } catch {
       /* clipboard unavailable — text is still selectable */
     }
-    // Take them to the repo so the command has somewhere to land.
-    window.open(REPO_URL, "_blank", "noopener,noreferrer");
   };
 
   return (
@@ -43,24 +40,22 @@ export function HeroCli() {
             $
           </span>
           <code className="fp-hero-cli-cmd">
-            python -m fineprint.eval <span className="text-accent">&lt;model&gt;</span>
+            python -m fineprint.market_data
           </code>
         </div>
         <button
           type="button"
           onClick={copy}
           className="fp-hero-cli-copy"
-          aria-label={copied ? "Copied — opening GitHub" : "Copy command and open GitHub"}
-          title="Copy and open the open-source repo"
+          aria-label={copied ? "Copied command" : "Copy refresh command"}
+          title="Copy the local ranking refresh command"
         >
           {copied ? <CheckIcon /> : <CopyIcon />}
         </button>
       </div>
       <p className="fp-hero-cli-note">
-        Run any model you care about.{" "}
-        <a href={REPO_URL} target="_blank" rel="noopener noreferrer">
-          Open source on GitHub
-        </a>
+        Refresh Flexprice Model Intelligence locally from public model rankings.{" "}
+        <a href="https://github.com/flexprice/fineprint" target="_blank" rel="noopener noreferrer">Open source on GitHub</a>
         .
       </p>
     </div>

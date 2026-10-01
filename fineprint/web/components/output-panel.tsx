@@ -128,7 +128,7 @@ export function OutputPanel({ result, revealed, running, model, hot, setHot }: {
         ) : (
           <span className="font-mono truncate">no extraction yet</span>
         )}
-        <a href="/#leaderboard" className={`text-accent font-semibold hover:underline shrink-0 ${running ? "invisible" : ""}`}>Compare on the leaderboard</a>
+        <a href="/#leaderboard" className={`text-accent font-semibold hover:underline shrink-0 ${running ? "invisible" : ""}`}>Browse model rankings</a>
       </div>
     </div>
   );

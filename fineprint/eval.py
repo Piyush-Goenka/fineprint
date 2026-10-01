@@ -1,4 +1,4 @@
-"""FinePrint — one command to benchmark a model end to end.
+"""LEGACY FinePrint benchmark runner — manual use only; not used for public rankings.
 
     python3 -m fineprint.eval gpt-5.6-luna              # a curated model
     python3 -m fineprint.eval anthropic/claude-opus-5   # any OpenRouter model, resolved live

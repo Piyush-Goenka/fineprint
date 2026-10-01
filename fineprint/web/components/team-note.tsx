@@ -11,16 +11,13 @@ export function TeamNote() {
             commitments. <span className="marker">We do that step in production.</span>
           </p>
           <p>
-            That is why we can score it. We already know which fields decide an invoice, what counts
-            as the same answer when a price is written two different ways, and what it costs when a
-            model gets one wrong and sounds certain about it.
+            That experience shapes what we look for in models. We know which fields decide an
+            invoice and how much a missed or misread term matters to the people using it.
           </p>
           <p>
-            So we wrote the rubric down, labeled a set of real contracts by hand, and ran every model
-            we could reach. We put the whole thing in the open so nobody else picking a model for this
-            has to start from scratch, and so the numbers keep updating as new models ship. If your
-            contracts look nothing like ours,{" "}
-            <span className="underline-hand">point the harness at your own</span>.
+            FinePrint brings together model rankings with a consistent scoring method, while the
+            scan lets you try an extraction on your own document. If your contracts look different,{" "}
+            <span className="underline-hand">try the scan on your own</span>.
           </p>
         </div>
 

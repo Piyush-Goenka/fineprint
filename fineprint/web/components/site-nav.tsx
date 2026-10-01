@@ -18,9 +18,8 @@ export function GitHubIcon({ size = 16 }: { size?: number }) {
 }
 
 const LINKS: [string, string][] = [
-  ["Leaderboard", "/#leaderboard"],
-  ["Charts", "/#analytics"],
-  ["Compare", "/compare"],
+  ["Rankings", "/#leaderboard"],
+  ["Sources", "/compare"],
   ["Try it", "/#try"],
   ["Methodology", "/methodology"],
 ];
