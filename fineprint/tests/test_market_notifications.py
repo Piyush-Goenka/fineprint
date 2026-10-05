@@ -4,9 +4,16 @@ import unittest
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 from fineprint.market_notifications import notification, post_slack
+from fineprint.market_data import build
 
 
 class MarketNotificationTests(unittest.TestCase):
+    def test_router_stays_in_picker_without_a_model_rank(self):
+        catalog = [{"id": "nvidia/switchyard", "name": "NVIDIA: Switchyard"}]
+        snapshot = build(catalog, [], {}, {}, "2026-10-05T00:00:00Z")
+        self.assertEqual(snapshot["rows"], [])
+        self.assertEqual(snapshot["catalog"][0]["id"], "nvidia/switchyard")
+
     def test_new_model_and_repeat_refresh(self):
         previous = {"rows": [{"id": "old"}], "n_ranked": 1}
         current = {

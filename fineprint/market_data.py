@@ -260,7 +260,8 @@ def build(catalog: list[dict], usage_data: list[dict], aa: dict[str, dict], aren
     # Moving aliases and routers do not identify one underlying model and cannot
     # receive a stable model score. They remain available in the scan picker.
     models = {key: model for key, model in models.items()
-              if not (model["id"].startswith("~") or model["id"].startswith("openrouter/") or model["id"].endswith("-router"))}
+              if not (model["id"].startswith("~") or model["id"].startswith("openrouter/")
+                      or model["id"].endswith("-router") or model["id"] == "nvidia/switchyard")}
 
     # Ranking portals often publish a family slug or display name while the catalog uses a
     # dated deployment ID. Match those portal labels against catalog names as a fallback to the
