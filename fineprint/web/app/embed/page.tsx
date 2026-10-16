@@ -1,4 +1,4 @@
-import { marketData } from "@/lib/market-data";
+import { marketData, marketDataUpdatedDate } from "@/lib/market-data";
 import { ProviderIcon } from "@/components/provider-icon";
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://fineprint.flexprice.io";
@@ -20,7 +20,7 @@ export default function EmbedPage() {
         </div>
         <span className="ml-auto inline-flex items-center gap-1.5 font-mono text-[10px] text-muted">
           <span className="size-1.5 rounded-full" style={{ background: "var(--success)" }} />
-          updated {new Date(marketData.as_of).toLocaleDateString()}
+          updated {marketDataUpdatedDate}
         </span>
       </header>
 

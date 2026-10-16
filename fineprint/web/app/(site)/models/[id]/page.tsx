@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { marketData } from "@/lib/market-data";
+import { marketData, marketDataUpdatedDate } from "@/lib/market-data";
 import { ProviderIcon } from "@/components/provider-icon";
 
 export function generateStaticParams() {
@@ -22,7 +22,7 @@ export default async function ModelPage({ params }: { params: Promise<{ id: stri
   return <div className="shell py-12">
     <Link href="/#leaderboard" className="font-mono text-[12px] text-faint hover:text-muted">Back to rankings</Link>
     <div className="mt-4 flex items-center gap-3"><ProviderIcon brand={model.creator} size={30} /><h1 className="display text-[clamp(2rem,5vw,2.8rem)]">{model.label}</h1></div>
-    <p className="mt-3 text-muted">Flexprice model metrics · updated {new Date(marketData.as_of).toLocaleDateString()}.</p>
+    <p className="mt-3 text-muted">Flexprice model metrics · updated {marketDataUpdatedDate}.</p>
     <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-4 gap-3">{[
       ["Capability", "capability", model.metrics?.capability], ["Preference", "preference", model.metrics?.preference],
       ["Adoption", "adoption", model.metrics?.adoption], ["Flexprice Index", "overall", model.overall],

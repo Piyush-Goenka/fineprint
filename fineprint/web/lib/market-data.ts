@@ -31,3 +31,11 @@ export type MarketData = {
 };
 
 export const marketData = raw as MarketData;
+
+// Keep server rendering and browser hydration independent of the user's locale and time zone.
+export const marketDataUpdatedDate = new Date(marketData.as_of).toLocaleDateString("en-US", {
+  year: "numeric",
+  month: "short",
+  day: "numeric",
+  timeZone: "UTC",
+});

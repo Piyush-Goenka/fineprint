@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { marketData, type ExternalModel } from "@/lib/market-data";
+import { marketData, marketDataUpdatedDate, type ExternalModel } from "@/lib/market-data";
 import { ProviderIcon } from "@/components/provider-icon";
 import Link from "next/link";
 
@@ -50,7 +50,7 @@ export function Leaderboard() {
   return (
     <div>
       <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-b border-line">
-        <div className="text-[12px] text-muted">Updated {new Date(marketData.as_of).toLocaleDateString()}</div>
+        <div className="text-[12px] text-muted">Updated {marketDataUpdatedDate}</div>
         <input aria-label="Search models" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search models…" className="rounded-lg border border-line bg-surface px-3 py-2 text-[12px] outline-none focus:border-accent" />
       </div>
       {marketData.source_errors && Object.keys(marketData.source_errors).length > 0 && <p className="px-4 py-2 text-[12px] text-warning">{Object.keys(marketData.source_errors).map((key) => SOURCE_LABELS[key] ?? key).join(" and ")} did not respond during this refresh.</p>}
