@@ -1,6 +1,6 @@
 import raw from "./market-data.json";
 
-export type SourceKey = "artificial_analysis" | "arena" | "openrouter" | "openrouter_catalog";
+export type SourceKey = "artificial_analysis" | "arena" | "openrouter" | "openrouter_catalog" | "flexprice_tasks";
 export type ExternalModel = {
   id: string;
   label: string;
@@ -23,11 +23,19 @@ export type MarketData = {
   n_ranked: number;
   rows: ExternalModel[];
   catalog: OpenRouterModel[];
-  sources: Record<SourceKey, { label: string; url: string }>;
+  sources: Partial<Record<SourceKey, { label: string; url: string }>>;
   source_errors?: Partial<Record<SourceKey, string>>;
   openrouter_usage_coverage?: number;
   preview_fixture?: boolean;
-  methodology: { weights: Record<string, number>; normalization?: string; caveat?: string };
+  methodology: {
+    weights: Record<string, number>;
+    task_weights?: Record<string, number>;
+    weight_selection?: string;
+    index_description?: string;
+    normalization?: string;
+    task_normalization?: string;
+    caveat?: string;
+  };
 };
 
 export const marketData = raw as MarketData;

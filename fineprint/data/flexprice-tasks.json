@@ -1,0 +1,282 @@
+{
+  "claude-fable-5.1": {
+    "label": "Claude Fable 5.1",
+    "accuracy": 79.4,
+    "extraction": 75.6,
+    "convention": 84.2,
+    "halluc": 2.6,
+    "consistency": 0.0
+  },
+  "claude-opus-5": {
+    "label": "Claude Opus 5",
+    "accuracy": 77.8,
+    "extraction": 74.9,
+    "convention": 81.8,
+    "halluc": 3.6,
+    "consistency": 0.0
+  },
+  "claude-opus-4.8": {
+    "label": "Claude Opus 4.8",
+    "accuracy": 76.9,
+    "extraction": 75.3,
+    "convention": 78.9,
+    "halluc": 4.6,
+    "consistency": 0.0
+  },
+  "gpt-5.6-sol": {
+    "label": "GPT-5.6 Sol",
+    "accuracy": 76.7,
+    "extraction": 76.3,
+    "convention": 77.1,
+    "halluc": 4.7,
+    "consistency": 0.0
+  },
+  "claude-fable-5": {
+    "label": "Claude Fable 5",
+    "accuracy": 76.3,
+    "extraction": 74.0,
+    "convention": 79.6,
+    "halluc": 2.3,
+    "consistency": 0.0
+  },
+  "gemini-3.5-flash-lite": {
+    "label": "Gemini 3.5 Flash Lite",
+    "accuracy": 76.1,
+    "extraction": 70.9,
+    "convention": 82.7,
+    "halluc": 21.8,
+    "consistency": 0.0
+  },
+  "gpt-5.5": {
+    "label": "GPT-5.5",
+    "accuracy": 76.0,
+    "extraction": 74.3,
+    "convention": 78.1,
+    "halluc": 6.2,
+    "consistency": 0.0
+  },
+  "claude-sonnet-5": {
+    "label": "Claude Sonnet 5",
+    "accuracy": 75.4,
+    "extraction": 73.0,
+    "convention": 78.5,
+    "halluc": 6.2,
+    "consistency": 0.0
+  },
+  "muse-spark-1.3-contributor": {
+    "label": "Muse Spark 1.3 Contributor",
+    "accuracy": 74.5,
+    "extraction": 75.4,
+    "convention": 73.4,
+    "halluc": 5.2,
+    "consistency": 0.0
+  },
+  "gpt-5.6-terra": {
+    "label": "GPT-5.6 Terra",
+    "accuracy": 72.8,
+    "extraction": 76.6,
+    "convention": 68.1,
+    "halluc": 2.4,
+    "consistency": 0.0
+  },
+  "muse-spark-1.3": {
+    "label": "Muse Spark 1.3",
+    "accuracy": 72.8,
+    "extraction": 70.5,
+    "convention": 75.7,
+    "halluc": 5.2,
+    "consistency": 0.0
+  },
+  "gpt-6-astra": {
+    "label": "GPT-6 Astra",
+    "accuracy": 72.0,
+    "extraction": 72.5,
+    "convention": 71.4,
+    "halluc": 3.5,
+    "consistency": 0.0
+  },
+  "mistral-medium-3-5": {
+    "label": "Mistral Medium 3.5",
+    "accuracy": 71.1,
+    "extraction": 70.4,
+    "convention": 71.9,
+    "halluc": 10.8,
+    "consistency": 0.0
+  },
+  "mistral-large-2512": {
+    "label": "Mistral Large",
+    "accuracy": 71.0,
+    "extraction": 61.8,
+    "convention": 84.4,
+    "halluc": 19.0,
+    "consistency": 0.0
+  },
+  "gpt-5.6-luna": {
+    "label": "GPT-5.6 Luna",
+    "accuracy": 70.9,
+    "extraction": 73.0,
+    "convention": 68.3,
+    "halluc": 5.3,
+    "consistency": 0.0
+  },
+  "gpt-5.4-mini": {
+    "label": "GPT-5.4 Mini",
+    "accuracy": 70.0,
+    "extraction": 74.0,
+    "convention": 64.8,
+    "halluc": 4.7,
+    "consistency": 0.0
+  },
+  "gpt-5.4-nano": {
+    "label": "GPT-5.4 Nano",
+    "accuracy": 67.4,
+    "extraction": 66.9,
+    "convention": 68.1,
+    "halluc": 3.9,
+    "consistency": 0.0
+  },
+  "grok-4.20": {
+    "label": "Grok 4.20",
+    "accuracy": 63.3,
+    "extraction": 55.4,
+    "convention": 74.8,
+    "halluc": 30.3,
+    "consistency": 0.0
+  },
+  "grok-4.3": {
+    "label": "Grok 4.3",
+    "accuracy": 62.9,
+    "extraction": 63.4,
+    "convention": 62.3,
+    "halluc": 23.9,
+    "consistency": 0.0
+  },
+  "deepseek-v3.2": {
+    "label": "DeepSeek V3.2",
+    "accuracy": 62.8,
+    "extraction": 64.1,
+    "convention": 61.0,
+    "halluc": 15.7,
+    "consistency": 0.0
+  },
+  "qwen3.7-max": {
+    "label": "Qwen3.7 Max",
+    "accuracy": 60.3,
+    "extraction": 61.8,
+    "convention": 58.3,
+    "halluc": 21.6,
+    "consistency": 0.0
+  },
+  "mistral-small-2603": {
+    "label": "Mistral Small",
+    "accuracy": 59.8,
+    "extraction": 65.3,
+    "convention": 52.7,
+    "halluc": 28.3,
+    "consistency": 0.0
+  },
+  "minimax-m3": {
+    "label": "MiniMax M3",
+    "accuracy": 57.0,
+    "extraction": 52.4,
+    "convention": 63.5,
+    "halluc": 30.9,
+    "consistency": 0.0
+  },
+  "deepseek-v4-flash": {
+    "label": "DeepSeek V4 Flash",
+    "accuracy": 56.4,
+    "extraction": 58.4,
+    "convention": 53.6,
+    "halluc": 23.1,
+    "consistency": 0.0
+  },
+  "qwen3.7-plus": {
+    "label": "Qwen3.7 Plus",
+    "accuracy": 56.2,
+    "extraction": 52.2,
+    "convention": 62.0,
+    "halluc": 37.7,
+    "consistency": 0.0
+  },
+  "deepseek-r1-0528": {
+    "label": "DeepSeek R1",
+    "accuracy": 55.7,
+    "extraction": 62.1,
+    "convention": 46.8,
+    "halluc": 19.6,
+    "consistency": 0.0
+  },
+  "deepseek-v4-pro": {
+    "label": "DeepSeek V4 Pro",
+    "accuracy": 54.6,
+    "extraction": 55.2,
+    "convention": 53.8,
+    "halluc": 24.3,
+    "consistency": 0.0
+  },
+  "nova-2-lite-v1": {
+    "label": "Nova 2 Lite",
+    "accuracy": 53.6,
+    "extraction": 56.4,
+    "convention": 50.0,
+    "halluc": 22.6,
+    "consistency": 0.0
+  },
+  "ministral-14b-2512": {
+    "label": "Ministral 14B",
+    "accuracy": 50.7,
+    "extraction": 41.9,
+    "convention": 63.6,
+    "halluc": 12.9,
+    "consistency": 0.0
+  },
+  "nemotron-3-super-120b-a12b": {
+    "label": "Nemotron 3 Super",
+    "accuracy": 49.8,
+    "extraction": 55.6,
+    "convention": 41.8,
+    "halluc": 15.2,
+    "consistency": 0.0
+  },
+  "llama-4-maverick": {
+    "label": "Llama 4 Maverick",
+    "accuracy": 49.4,
+    "extraction": 50.3,
+    "convention": 48.1,
+    "halluc": 33.1,
+    "consistency": 0.0
+  },
+  "glm-5.2": {
+    "label": "GLM-5.2",
+    "accuracy": 45.0,
+    "extraction": 44.0,
+    "convention": 46.5,
+    "halluc": 23.8,
+    "consistency": 0.0
+  },
+  "qwen3.7-flash": {
+    "label": "Qwen3.7 Flash",
+    "accuracy": 36.2,
+    "extraction": 42.3,
+    "convention": 26.9,
+    "halluc": 18.3,
+    "consistency": 0.0
+  },
+  "llama-4-scout": {
+    "label": "Llama 4 Scout",
+    "accuracy": 34.4,
+    "extraction": 40.1,
+    "convention": 26.4,
+    "halluc": 45.7,
+    "consistency": 0.0
+  },
+  "llama-3.3-70b-instruct": {
+    "label": "Llama 3.3 70B",
+    "accuracy": 34.2,
+    "extraction": 41.8,
+    "convention": 23.1,
+    "halluc": 20.0,
+    "consistency": 0.0
+  }
+}

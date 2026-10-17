@@ -22,6 +22,7 @@ def test_add_model_leaves_existing_rows_untouched(tmp_path, monkeypatch):
     ]
     board_path = _board(tmp_path, [dict(r) for r in existing])
     monkeypatch.setattr(export, "WEB_DATA", board_path)
+    monkeypatch.setattr(export, "FLEXPRICE_TASKS", tmp_path / "flexprice-tasks.json")
     monkeypatch.setattr(export, "all_models", lambda: [{"id": "gamma", "label": "Gamma"}])
     monkeypatch.setattr(export.pricing, "load", lambda: {})
     monkeypatch.setattr(export, "load_runs", lambda p: [{"model": "gamma"}])
@@ -51,6 +52,7 @@ def test_add_model_replaces_its_own_row_on_rerun(tmp_path, monkeypatch):
                 {"id": "gamma", "label": "Gamma", "accuracy": 10.0, "rank": 2}]
     board_path = _board(tmp_path, [dict(r) for r in existing])
     monkeypatch.setattr(export, "WEB_DATA", board_path)
+    monkeypatch.setattr(export, "FLEXPRICE_TASKS", tmp_path / "flexprice-tasks.json")
     monkeypatch.setattr(export, "all_models", lambda: [{"id": "gamma", "label": "Gamma"}])
     monkeypatch.setattr(export.pricing, "load", lambda: {})
     monkeypatch.setattr(export, "load_runs", lambda p: [{"model": "gamma"}])
@@ -81,6 +83,7 @@ def test_add_model_refuses_a_row_whose_calls_mostly_failed(tmp_path, monkeypatch
     """
     board_path = _board(tmp_path, [{"id": "alpha", "accuracy": 90.0, "rank": 1}])
     monkeypatch.setattr(export, "WEB_DATA", board_path)
+    monkeypatch.setattr(export, "FLEXPRICE_TASKS", tmp_path / "flexprice-tasks.json")
     monkeypatch.setattr(export, "all_models", lambda: [{"id": "gamma", "label": "Gamma"}])
     monkeypatch.setattr(export.pricing, "load", lambda: {})
     monkeypatch.setattr(export, "load_runs", lambda p: [{"model": "gamma"}])
@@ -96,6 +99,7 @@ def test_add_model_refuses_a_row_whose_calls_mostly_failed(tmp_path, monkeypatch
 def test_add_model_publishes_a_row_with_healthy_reliability(tmp_path, monkeypatch):
     board_path = _board(tmp_path, [{"id": "alpha", "accuracy": 90.0, "rank": 1}])
     monkeypatch.setattr(export, "WEB_DATA", board_path)
+    monkeypatch.setattr(export, "FLEXPRICE_TASKS", tmp_path / "flexprice-tasks.json")
     monkeypatch.setattr(export, "all_models", lambda: [{"id": "gamma", "label": "Gamma"}])
     monkeypatch.setattr(export.pricing, "load", lambda: {})
     monkeypatch.setattr(export, "load_runs", lambda p: [{"model": "gamma"}])
@@ -126,6 +130,7 @@ def test_build_scores_every_model_on_the_declared_corpus_only(tmp_path, monkeypa
     results.write_text(json.dumps({"n_runs": 1, "runs": runs}))
     monkeypatch.setattr(export, "RESULTS", results)
     monkeypatch.setattr(export, "WEB_DATA", tmp_path / "data.json")
+    monkeypatch.setattr(export, "FLEXPRICE_TASKS", tmp_path / "flexprice-tasks.json")
     monkeypatch.setattr(export, "SEED_CONTRACTS", corpus)
     monkeypatch.setattr(export, "all_models", lambda: [
         {"id": "wide", "label": "W", "family": "F", "price_in": 1, "price_out": 1},
@@ -148,6 +153,7 @@ def test_build_drops_a_model_that_covers_too_little_of_the_corpus(tmp_path, monk
     results.write_text(json.dumps({"n_runs": 1, "runs": runs}))
     monkeypatch.setattr(export, "RESULTS", results)
     monkeypatch.setattr(export, "WEB_DATA", tmp_path / "data.json")
+    monkeypatch.setattr(export, "FLEXPRICE_TASKS", tmp_path / "flexprice-tasks.json")
     monkeypatch.setattr(export, "SEED_CONTRACTS", corpus)
     monkeypatch.setattr(export, "all_models", lambda: [
         {"id": "full", "label": "F", "family": "F", "price_in": 1, "price_out": 1},
@@ -172,6 +178,7 @@ def test_build_counts_coverage_from_successful_calls_only(tmp_path, monkeypatch)
     results.write_text(json.dumps({"n_runs": 1, "runs": runs}))
     monkeypatch.setattr(export, "RESULTS", results)
     monkeypatch.setattr(export, "WEB_DATA", tmp_path / "data.json")
+    monkeypatch.setattr(export, "FLEXPRICE_TASKS", tmp_path / "flexprice-tasks.json")
     monkeypatch.setattr(export, "SEED_CONTRACTS", corpus)
     monkeypatch.setattr(export, "all_models", lambda: [
         {"id": "solid", "label": "S", "family": "F", "price_in": 1, "price_out": 1},
@@ -195,6 +202,7 @@ def test_build_drops_a_model_whose_calls_mostly_failed(tmp_path, monkeypatch):
     results.write_text(json.dumps({"n_runs": 1, "runs": runs}))
     monkeypatch.setattr(export, "RESULTS", results)
     monkeypatch.setattr(export, "WEB_DATA", tmp_path / "data.json")
+    monkeypatch.setattr(export, "FLEXPRICE_TASKS", tmp_path / "flexprice-tasks.json")
     monkeypatch.setattr(export, "SEED_CONTRACTS", corpus)
     monkeypatch.setattr(export, "all_models", lambda: [
         {"id": "solid", "label": "S", "family": "F", "price_in": 1, "price_out": 1},
@@ -202,3 +210,43 @@ def test_build_drops_a_model_whose_calls_mostly_failed(tmp_path, monkeypatch):
     monkeypatch.setattr(export.pricing, "load", lambda: {})
 
     assert [r["id"] for r in export.build()["rows"]] == ["solid"]
+
+
+def test_sync_flexprice_tasks_upserts_evaluated_models(tmp_path, monkeypatch):
+    tasks_path = tmp_path / "flexprice-tasks.json"
+    tasks_path.write_text(json.dumps({
+        "existing-model": {
+            "label": "Existing Model",
+            "accuracy": 70.0,
+            "extraction": 68.0,
+            "convention": 72.0,
+            "halluc": 5.0,
+            "consistency": 1.2,
+        }
+    }))
+    monkeypatch.setattr(export, "FLEXPRICE_TASKS", tasks_path)
+    board_path = _board(tmp_path, [{"id": "existing-model", "accuracy": 70.0, "rank": 1}])
+    monkeypatch.setattr(export, "WEB_DATA", board_path)
+    monkeypatch.setattr(export, "FLEXPRICE_TASKS", tmp_path / "flexprice-tasks.json")
+    monkeypatch.setattr(export, "all_models", lambda: [{"id": "gamma", "label": "Gamma"}])
+    monkeypatch.setattr(export.pricing, "load", lambda: {})
+    monkeypatch.setattr(export, "load_runs", lambda p: [{"model": "gamma"}])
+    monkeypatch.setattr(export, "SEED_CONTRACTS", [("C1", "c1")])
+    monkeypatch.setattr(export, "aggregate",
+                        lambda runs, models, contracts: ([{
+                            "id": "gamma", "label": "Gamma", "accuracy": 82.5,
+                            "extraction": 80.0, "convention": 85.0, "halluc": 2.0,
+                            "consistency": 0.5, "reliability": 100.0, "calls": 10
+                        }], {}))
+
+    export.add_model("gamma")
+    saved = json.loads(tasks_path.read_text())
+    assert "existing-model" in saved
+    assert saved["gamma"] == {
+        "label": "Gamma",
+        "accuracy": 82.5,
+        "extraction": 80.0,
+        "convention": 85.0,
+        "halluc": 2.0,
+        "consistency": 0.5,
+    }

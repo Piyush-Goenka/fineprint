@@ -8,7 +8,16 @@
       "preference": 0.35,
       "adoption": 0.25
     },
+    "task_weights": {
+      "capability": 0.3,
+      "preference": 0.25,
+      "adoption": 0.2,
+      "flexprice_tasks": 0.25
+    },
+    "weight_selection": "Use task_weights when a model has sources.flexprice_tasks; otherwise use weights.",
+    "index_description": "Models with Flexprice task results: 30% capability + 25% preference + 20% adoption + 25% Flexprice tasks. Models without task results: 40% capability + 35% preference + 25% adoption.",
     "normalization": "Capability uses the Artificial Analysis Intelligence Index when published, otherwise a catalog-feature estimate calibrated against benchmarked models with a 10-point text capability floor. Preference combines Arena ratings (70%) and developer request activity (30%) where Arena is available; otherwise it uses request activity. Adoption is log-scaled OpenRouter token volume. Models with no published usage receive zero for request activity and adoption.",
+    "task_normalization": "The local Flexprice task composite is 0.35 × accuracy + 0.30 × extraction + 0.20 × convention + 0.15 × max(0, 100 − hallucination) − 0.20 × consistency, clamped to 0–100 and rounded to one decimal. With two or more matched models, composites are min-max normalized to 0–100; if all composites are equal, they normalize to 100. A single matched model keeps its composite score. The Index uses this normalized task score.",
     "metrics": {
       "intelligence": {
         "label": "Capability",
@@ -49,7 +58,7 @@
         "url": "https://openrouter.ai/api/v1/models"
       }
     },
-    "caveat": "Flexprice Index is a relative composite of published benchmark scores and reproducible derived metrics. It does not measure FinePrint contract-extraction accuracy or claim that every model has been independently evaluated."
+    "caveat": "Flexprice Index combines public signals with local task results where available. It is not a standalone contract-extraction accuracy score and does not imply that every model has Flexprice task results."
   },
   "sources": {
     "artificial_analysis": {
@@ -110,38 +119,6 @@
       "rank": 1
     },
     {
-      "id": "openai/gpt-6-astra-20260903",
-      "label": "OpenAI: GPT-6 Astra",
-      "creator": "openai",
-      "openrouter_ids": [
-        "openai/gpt-6-astra-20260903"
-      ],
-      "sources": {
-        "artificial_analysis": {
-          "raw": 52.673669395513,
-          "normalized": 90.6
-        },
-        "openrouter": {
-          "raw": 5051473984949,
-          "normalized": 89.7
-        }
-      },
-      "source_count": 2,
-      "metric_basis": {
-        "capability": "observed",
-        "preference": "derived",
-        "adoption": "observed"
-      },
-      "metrics": {
-        "capability": 90.6,
-        "preference": 81.4,
-        "adoption": 89.7
-      },
-      "ranked": true,
-      "overall": 87.2,
-      "rank": 2
-    },
-    {
       "id": "anthropic/claude-fable-5.1-20260831",
       "label": "Anthropic: Claude Fable 5.1",
       "creator": "anthropic",
@@ -156,9 +133,13 @@
         "openrouter": {
           "raw": 1938873885568,
           "normalized": 85.9
+        },
+        "flexprice_tasks": {
+          "raw": 81.9,
+          "normalized": 100.0
         }
       },
-      "source_count": 2,
+      "source_count": 3,
       "metric_basis": {
         "capability": "observed",
         "preference": "derived",
@@ -170,7 +151,43 @@
         "adoption": 85.9
       },
       "ranked": true,
-      "overall": 84.2,
+      "overall": 88.3,
+      "rank": 2
+    },
+    {
+      "id": "openai/gpt-6-astra-20260903",
+      "label": "OpenAI: GPT-6 Astra",
+      "creator": "openai",
+      "openrouter_ids": [
+        "openai/gpt-6-astra-20260903"
+      ],
+      "sources": {
+        "artificial_analysis": {
+          "raw": 52.673669395513,
+          "normalized": 90.6
+        },
+        "openrouter": {
+          "raw": 5051473984949,
+          "normalized": 89.7
+        },
+        "flexprice_tasks": {
+          "raw": 75.7,
+          "normalized": 86.0
+        }
+      },
+      "source_count": 3,
+      "metric_basis": {
+        "capability": "observed",
+        "preference": "derived",
+        "adoption": "observed"
+      },
+      "metrics": {
+        "capability": 90.6,
+        "preference": 81.4,
+        "adoption": 89.7
+      },
+      "ranked": true,
+      "overall": 87.0,
       "rank": 3
     },
     {
@@ -216,9 +233,13 @@
         "openrouter": {
           "raw": 45063631350055,
           "normalized": 98.5
+        },
+        "flexprice_tasks": {
+          "raw": 74.6,
+          "normalized": 83.6
         }
       },
-      "source_count": 1,
+      "source_count": 2,
       "metric_basis": {
         "capability": "derived",
         "preference": "derived",
@@ -230,7 +251,7 @@
         "adoption": 98.5
       },
       "ranked": true,
-      "overall": 82.4,
+      "overall": 82.7,
       "rank": 5
     },
     {
@@ -266,6 +287,74 @@
       "rank": 6
     },
     {
+      "id": "meta/muse-spark-1.3-20260902",
+      "label": "Meta: Muse Spark 1.3",
+      "creator": "meta",
+      "openrouter_ids": [
+        "meta/muse-spark-1.3-20260902"
+      ],
+      "sources": {
+        "artificial_analysis": {
+          "raw": 48.0923107719685,
+          "normalized": 81.9
+        },
+        "openrouter": {
+          "raw": 1417928767905,
+          "normalized": 84.6
+        },
+        "flexprice_tasks": {
+          "raw": 76.0,
+          "normalized": 86.7
+        }
+      },
+      "source_count": 3,
+      "metric_basis": {
+        "capability": "observed",
+        "preference": "derived",
+        "adoption": "observed"
+      },
+      "metrics": {
+        "capability": 81.9,
+        "preference": 74.6,
+        "adoption": 84.6
+      },
+      "ranked": true,
+      "overall": 81.8,
+      "rank": 7
+    },
+    {
+      "id": "openai/gpt-5.6-sol-20260709",
+      "label": "OpenAI: GPT-5.6 Sol",
+      "creator": "openai",
+      "openrouter_ids": [
+        "openai/gpt-5.6-sol-20260709"
+      ],
+      "sources": {
+        "openrouter": {
+          "raw": 7095511859554,
+          "normalized": 91.1
+        },
+        "flexprice_tasks": {
+          "raw": 79.5,
+          "normalized": 94.6
+        }
+      },
+      "source_count": 2,
+      "metric_basis": {
+        "capability": "derived",
+        "preference": "derived",
+        "adoption": "observed"
+      },
+      "metrics": {
+        "capability": 60.4,
+        "preference": 84.3,
+        "adoption": 91.1
+      },
+      "ranked": true,
+      "overall": 81.1,
+      "rank": 8
+    },
+    {
       "id": "moonshotai/kimi-k3-20260715",
       "label": "MoonshotAI: Kimi K3",
       "creator": "moonshotai",
@@ -295,39 +384,75 @@
       },
       "ranked": true,
       "overall": 81.0,
-      "rank": 7
+      "rank": 9
     },
     {
-      "id": "meta/muse-spark-1.3-20260902",
-      "label": "Meta: Muse Spark 1.3",
-      "creator": "meta",
+      "id": "openai/gpt-5.6-terra-20260709",
+      "label": "OpenAI: GPT-5.6 Terra",
+      "creator": "openai",
       "openrouter_ids": [
-        "meta/muse-spark-1.3-20260902"
+        "openai/gpt-5.6-terra-20260709"
       ],
       "sources": {
         "artificial_analysis": {
-          "raw": 48.0923107719685,
-          "normalized": 81.9
+          "raw": 42.0829248239494,
+          "normalized": 70.4
         },
         "openrouter": {
-          "raw": 1417928767905,
-          "normalized": 84.6
+          "raw": 2070716699997,
+          "normalized": 86.2
+        },
+        "flexprice_tasks": {
+          "raw": 76.7,
+          "normalized": 88.3
         }
       },
-      "source_count": 2,
+      "source_count": 3,
       "metric_basis": {
         "capability": "observed",
         "preference": "derived",
         "adoption": "observed"
       },
       "metrics": {
-        "capability": 81.9,
-        "preference": 74.6,
-        "adoption": 84.6
+        "capability": 70.4,
+        "preference": 80.5,
+        "adoption": 86.2
+      },
+      "ranked": true,
+      "overall": 80.6,
+      "rank": 10
+    },
+    {
+      "id": "meta/muse-spark-1.3-contributor-20260902",
+      "label": "Meta: Muse Spark 1.3 Contributor",
+      "creator": "meta",
+      "openrouter_ids": [
+        "meta/muse-spark-1.3-contributor-20260902"
+      ],
+      "sources": {
+        "openrouter": {
+          "raw": 7786102722365,
+          "normalized": 91.5
+        },
+        "flexprice_tasks": {
+          "raw": 77.6,
+          "normalized": 90.3
+        }
+      },
+      "source_count": 2,
+      "metric_basis": {
+        "capability": "derived",
+        "preference": "derived",
+        "adoption": "observed"
+      },
+      "metrics": {
+        "capability": 60.5,
+        "preference": 84.1,
+        "adoption": 91.5
       },
       "ranked": true,
       "overall": 80.0,
-      "rank": 8
+      "rank": 11
     },
     {
       "id": "openai/gpt-6-luna-20260922",
@@ -359,7 +484,7 @@
       },
       "ranked": true,
       "overall": 79.4,
-      "rank": 9
+      "rank": 12
     },
     {
       "id": "google/gemini-2.5-flash-lite",
@@ -387,72 +512,7 @@
       },
       "ranked": true,
       "overall": 78.2,
-      "rank": 10
-    },
-    {
-      "id": "openai/gpt-5.6-terra-20260709",
-      "label": "OpenAI: GPT-5.6 Terra",
-      "creator": "openai",
-      "openrouter_ids": [
-        "openai/gpt-5.6-terra-20260709"
-      ],
-      "sources": {
-        "artificial_analysis": {
-          "raw": 42.0829248239494,
-          "normalized": 70.4
-        },
-        "openrouter": {
-          "raw": 2070716699997,
-          "normalized": 86.2
-        }
-      },
-      "source_count": 2,
-      "metric_basis": {
-        "capability": "observed",
-        "preference": "derived",
-        "adoption": "observed"
-      },
-      "metrics": {
-        "capability": 70.4,
-        "preference": 80.5,
-        "adoption": 86.2
-      },
-      "ranked": true,
-      "overall": 77.9,
-      "rank": 11
-    },
-    {
-      "id": "deepseek/deepseek-v4-pro-20260813",
-      "label": "DeepSeek: DeepSeek V4 Pro 0813",
-      "creator": "deepseek",
-      "openrouter_ids": [
-        "deepseek/deepseek-v4-pro-20260813",
-        "deepseek/deepseek-v4-pro-20260423"
-      ],
-      "sources": {
-        "artificial_analysis": {
-          "raw": 35.9967791278402,
-          "normalized": 58.8
-        },
-        "openrouter": {
-          "raw": 8360484478828,
-          "normalized": 91.7
-        }
-      },
-      "source_count": 2,
-      "metric_basis": {
-        "capability": "observed",
-        "preference": "derived",
-        "adoption": "observed"
-      },
-      "metrics": {
-        "capability": 58.8,
-        "preference": 87.5,
-        "adoption": 91.7
-      },
-      "ranked": true,
-      "overall": 77.1,
-      "rank": 12
+      "rank": 13
     },
     {
       "id": "qwen/qwen3.8-max-20260902",
@@ -489,63 +549,7 @@
       },
       "ranked": true,
       "overall": 76.7,
-      "rank": 13
-    },
-    {
-      "id": "meta/muse-spark-1.3-contributor-20260902",
-      "label": "Meta: Muse Spark 1.3 Contributor",
-      "creator": "meta",
-      "openrouter_ids": [
-        "meta/muse-spark-1.3-contributor-20260902"
-      ],
-      "sources": {
-        "openrouter": {
-          "raw": 7786102722365,
-          "normalized": 91.5
-        }
-      },
-      "source_count": 1,
-      "metric_basis": {
-        "capability": "derived",
-        "preference": "derived",
-        "adoption": "observed"
-      },
-      "metrics": {
-        "capability": 60.5,
-        "preference": 84.1,
-        "adoption": 91.5
-      },
-      "ranked": true,
-      "overall": 76.5,
       "rank": 14
-    },
-    {
-      "id": "openai/gpt-5.6-sol-20260709",
-      "label": "OpenAI: GPT-5.6 Sol",
-      "creator": "openai",
-      "openrouter_ids": [
-        "openai/gpt-5.6-sol-20260709"
-      ],
-      "sources": {
-        "openrouter": {
-          "raw": 7095511859554,
-          "normalized": 91.1
-        }
-      },
-      "source_count": 1,
-      "metric_basis": {
-        "capability": "derived",
-        "preference": "derived",
-        "adoption": "observed"
-      },
-      "metrics": {
-        "capability": 60.4,
-        "preference": 84.3,
-        "adoption": 91.1
-      },
-      "ranked": true,
-      "overall": 76.4,
-      "rank": 15
     },
     {
       "id": "google/gemini-2.5-flash",
@@ -573,7 +577,7 @@
       },
       "ranked": true,
       "overall": 76.3,
-      "rank": 16
+      "rank": 15
     },
     {
       "id": "google/gemini-3-flash-preview-20251217",
@@ -601,7 +605,7 @@
       },
       "ranked": true,
       "overall": 76.3,
-      "rank": 17
+      "rank": 16
     },
     {
       "id": "anthropic/claude-opus-5.5-20260921",
@@ -638,7 +642,7 @@
       },
       "ranked": true,
       "overall": 76.1,
-      "rank": 18
+      "rank": 17
     },
     {
       "id": "google/gemini-3.1-flash-lite-20260507",
@@ -666,7 +670,7 @@
       },
       "ranked": true,
       "overall": 76.1,
-      "rank": 19
+      "rank": 18
     },
     {
       "id": "z-ai/glm-5.3-20260816",
@@ -703,36 +707,7 @@
       },
       "ranked": true,
       "overall": 76.1,
-      "rank": 20
-    },
-    {
-      "id": "deepseek/deepseek-v4-flash-20260731",
-      "label": "DeepSeek: DeepSeek V4 Flash 0731",
-      "creator": "deepseek",
-      "openrouter_ids": [
-        "deepseek/deepseek-v4-flash-20260731",
-        "deepseek/deepseek-v4-flash-20260423"
-      ],
-      "sources": {
-        "openrouter": {
-          "raw": 55164006947073,
-          "normalized": 99.3
-        }
-      },
-      "source_count": 1,
-      "metric_basis": {
-        "capability": "derived",
-        "preference": "derived",
-        "adoption": "observed"
-      },
-      "metrics": {
-        "capability": 40.5,
-        "preference": 100.0,
-        "adoption": 99.3
-      },
-      "ranked": true,
-      "overall": 76.0,
-      "rank": 21
+      "rank": 19
     },
     {
       "id": "xiaomi/mimo-v2.5-20260422",
@@ -760,7 +735,7 @@
       },
       "ranked": true,
       "overall": 75.9,
-      "rank": 22
+      "rank": 20
     },
     {
       "id": "x-ai/grok-4.7-20260916",
@@ -797,7 +772,39 @@
       },
       "ranked": true,
       "overall": 74.2,
-      "rank": 23
+      "rank": 21
+    },
+    {
+      "id": "openai/gpt-5.4-mini-20260317",
+      "label": "OpenAI: GPT-5.4 Mini",
+      "creator": "openai",
+      "openrouter_ids": [
+        "openai/gpt-5.4-mini-20260317"
+      ],
+      "sources": {
+        "openrouter": {
+          "raw": 464508063872,
+          "normalized": 80.2
+        },
+        "flexprice_tasks": {
+          "raw": 74.0,
+          "normalized": 82.2
+        }
+      },
+      "source_count": 2,
+      "metric_basis": {
+        "capability": "derived",
+        "preference": "derived",
+        "adoption": "observed"
+      },
+      "metrics": {
+        "capability": 54.6,
+        "preference": 81.7,
+        "adoption": 80.2
+      },
+      "ranked": true,
+      "overall": 73.4,
+      "rank": 22
     },
     {
       "id": "stealth/space-bunny-alpha",
@@ -825,7 +832,7 @@
       },
       "ranked": true,
       "overall": 73.3,
-      "rank": 24
+      "rank": 23
     },
     {
       "id": "openai/gpt-6-sol-20260922",
@@ -853,6 +860,38 @@
       },
       "ranked": true,
       "overall": 72.9,
+      "rank": 24
+    },
+    {
+      "id": "openai/gpt-5.4-nano-20260317",
+      "label": "OpenAI: GPT-5.4 Nano",
+      "creator": "openai",
+      "openrouter_ids": [
+        "openai/gpt-5.4-nano-20260317"
+      ],
+      "sources": {
+        "openrouter": {
+          "raw": 492170809855,
+          "normalized": 80.4
+        },
+        "flexprice_tasks": {
+          "raw": 71.7,
+          "normalized": 77.0
+        }
+      },
+      "source_count": 2,
+      "metric_basis": {
+        "capability": "derived",
+        "preference": "derived",
+        "adoption": "observed"
+      },
+      "metrics": {
+        "capability": 54.6,
+        "preference": 82.4,
+        "adoption": 80.4
+      },
+      "ranked": true,
+      "overall": 72.3,
       "rank": 25
     },
     {
@@ -1000,62 +1039,6 @@
       "rank": 30
     },
     {
-      "id": "x-ai/grok-4.3-20260430",
-      "label": "SpaceXAI: Grok 4.3",
-      "creator": "x-ai",
-      "openrouter_ids": [
-        "x-ai/grok-4.3-20260430"
-      ],
-      "sources": {
-        "openrouter": {
-          "raw": 225639990309,
-          "normalized": 77.3
-        }
-      },
-      "source_count": 1,
-      "metric_basis": {
-        "capability": "derived",
-        "preference": "derived",
-        "adoption": "observed"
-      },
-      "metrics": {
-        "capability": 60.2,
-        "preference": 78.6,
-        "adoption": 77.3
-      },
-      "ranked": true,
-      "overall": 70.9,
-      "rank": 31
-    },
-    {
-      "id": "openai/gpt-5.4-nano-20260317",
-      "label": "OpenAI: GPT-5.4 Nano",
-      "creator": "openai",
-      "openrouter_ids": [
-        "openai/gpt-5.4-nano-20260317"
-      ],
-      "sources": {
-        "openrouter": {
-          "raw": 492170809855,
-          "normalized": 80.4
-        }
-      },
-      "source_count": 1,
-      "metric_basis": {
-        "capability": "derived",
-        "preference": "derived",
-        "adoption": "observed"
-      },
-      "metrics": {
-        "capability": 54.6,
-        "preference": 82.4,
-        "adoption": 80.4
-      },
-      "ranked": true,
-      "overall": 70.8,
-      "rank": 32
-    },
-    {
       "id": "openai/gpt-5.6-luna-pro-20260709",
       "label": "OpenAI: GPT-5.6 Luna Pro",
       "creator": "openai",
@@ -1081,7 +1064,7 @@
       },
       "ranked": true,
       "overall": 70.8,
-      "rank": 33
+      "rank": 31
     },
     {
       "id": "openai/gpt-5-mini-2025-08-07",
@@ -1109,7 +1092,7 @@
       },
       "ranked": true,
       "overall": 70.7,
-      "rank": 34
+      "rank": 32
     },
     {
       "id": "openai/gpt-6-luna-pro-20260922",
@@ -1137,7 +1120,7 @@
       },
       "ranked": true,
       "overall": 70.7,
-      "rank": 35
+      "rank": 33
     },
     {
       "id": "google/gemini-3.8-flash-20260902",
@@ -1174,35 +1157,7 @@
       },
       "ranked": true,
       "overall": 70.6,
-      "rank": 36
-    },
-    {
-      "id": "openai/gpt-5.4-mini-20260317",
-      "label": "OpenAI: GPT-5.4 Mini",
-      "creator": "openai",
-      "openrouter_ids": [
-        "openai/gpt-5.4-mini-20260317"
-      ],
-      "sources": {
-        "openrouter": {
-          "raw": 464508063872,
-          "normalized": 80.2
-        }
-      },
-      "source_count": 1,
-      "metric_basis": {
-        "capability": "derived",
-        "preference": "derived",
-        "adoption": "observed"
-      },
-      "metrics": {
-        "capability": 54.6,
-        "preference": 81.7,
-        "adoption": 80.2
-      },
-      "ranked": true,
-      "overall": 70.5,
-      "rank": 37
+      "rank": 34
     },
     {
       "id": "qwen/qwen3.5-flash-20260224",
@@ -1230,6 +1185,113 @@
       },
       "ranked": true,
       "overall": 69.7,
+      "rank": 35
+    },
+    {
+      "id": "anthropic/claude-opus-5-20260723",
+      "label": "Anthropic: Claude Opus 5",
+      "creator": "anthropic",
+      "openrouter_ids": [
+        "anthropic/claude-opus-5-20260723"
+      ],
+      "sources": {
+        "arena": {
+          "raw": 1489.7441630742715,
+          "normalized": 20.0,
+          "votes": 59482
+        },
+        "openrouter": {
+          "raw": 4524500550089,
+          "normalized": 89.3
+        },
+        "flexprice_tasks": {
+          "raw": 80.5,
+          "normalized": 96.8
+        }
+      },
+      "source_count": 3,
+      "metric_basis": {
+        "capability": "derived",
+        "preference": "observed",
+        "adoption": "observed"
+      },
+      "metrics": {
+        "capability": 60.1,
+        "preference": 38.0,
+        "adoption": 89.3
+      },
+      "ranked": true,
+      "overall": 69.6,
+      "rank": 36
+    },
+    {
+      "id": "deepseek/deepseek-v4-flash-20260731",
+      "label": "DeepSeek: DeepSeek V4 Flash 0731",
+      "creator": "deepseek",
+      "openrouter_ids": [
+        "deepseek/deepseek-v4-flash-20260731",
+        "deepseek/deepseek-v4-flash-20260423"
+      ],
+      "sources": {
+        "openrouter": {
+          "raw": 55164006947073,
+          "normalized": 99.3
+        },
+        "flexprice_tasks": {
+          "raw": 59.5,
+          "normalized": 49.5
+        }
+      },
+      "source_count": 2,
+      "metric_basis": {
+        "capability": "derived",
+        "preference": "derived",
+        "adoption": "observed"
+      },
+      "metrics": {
+        "capability": 40.5,
+        "preference": 100.0,
+        "adoption": 99.3
+      },
+      "ranked": true,
+      "overall": 69.4,
+      "rank": 37
+    },
+    {
+      "id": "deepseek/deepseek-v4-pro-20260813",
+      "label": "DeepSeek: DeepSeek V4 Pro 0813",
+      "creator": "deepseek",
+      "openrouter_ids": [
+        "deepseek/deepseek-v4-pro-20260813",
+        "deepseek/deepseek-v4-pro-20260423"
+      ],
+      "sources": {
+        "artificial_analysis": {
+          "raw": 35.9967791278402,
+          "normalized": 58.8
+        },
+        "openrouter": {
+          "raw": 8360484478828,
+          "normalized": 91.7
+        },
+        "flexprice_tasks": {
+          "raw": 57.8,
+          "normalized": 45.7
+        }
+      },
+      "source_count": 3,
+      "metric_basis": {
+        "capability": "observed",
+        "preference": "derived",
+        "adoption": "observed"
+      },
+      "metrics": {
+        "capability": 58.8,
+        "preference": 87.5,
+        "adoption": 91.7
+      },
+      "ranked": true,
+      "overall": 69.3,
       "rank": 38
     },
     {
@@ -1289,34 +1351,6 @@
       "rank": 40
     },
     {
-      "id": "x-ai/grok-4.20-20260309",
-      "label": "SpaceXAI: Grok 4.20",
-      "creator": "x-ai",
-      "openrouter_ids": [
-        "x-ai/grok-4.20-20260309"
-      ],
-      "sources": {
-        "openrouter": {
-          "raw": 135178660758,
-          "normalized": 75.2
-        }
-      },
-      "source_count": 1,
-      "metric_basis": {
-        "capability": "derived",
-        "preference": "derived",
-        "adoption": "observed"
-      },
-      "metrics": {
-        "capability": 60.5,
-        "preference": 74.4,
-        "adoption": 75.2
-      },
-      "ranked": true,
-      "overall": 69.0,
-      "rank": 41
-    },
-    {
       "id": "google/gemini-2.5-pro",
       "label": "Google: Gemini 2.5 Pro",
       "creator": "google",
@@ -1342,7 +1376,7 @@
       },
       "ranked": true,
       "overall": 68.9,
-      "rank": 42
+      "rank": 41
     },
     {
       "id": "upstage/solar-pro4-20260810",
@@ -1374,6 +1408,38 @@
       },
       "ranked": true,
       "overall": 68.8,
+      "rank": 42
+    },
+    {
+      "id": "x-ai/grok-4.3-20260430",
+      "label": "SpaceXAI: Grok 4.3",
+      "creator": "x-ai",
+      "openrouter_ids": [
+        "x-ai/grok-4.3-20260430"
+      ],
+      "sources": {
+        "openrouter": {
+          "raw": 225639990309,
+          "normalized": 77.3
+        },
+        "flexprice_tasks": {
+          "raw": 64.9,
+          "normalized": 61.7
+        }
+      },
+      "source_count": 2,
+      "metric_basis": {
+        "capability": "derived",
+        "preference": "derived",
+        "adoption": "observed"
+      },
+      "metrics": {
+        "capability": 60.2,
+        "preference": 78.6,
+        "adoption": 77.3
+      },
+      "ranked": true,
+      "overall": 68.6,
       "rank": 43
     },
     {
@@ -1437,32 +1503,110 @@
       "rank": 45
     },
     {
-      "id": "qwen/qwen3.7-flash-20260727",
-      "label": "Qwen: Qwen3.7 Flash",
-      "creator": "qwen",
+      "id": "anthropic/claude-4.8-opus-20260528",
+      "label": "Anthropic: Claude Opus 4.8",
+      "creator": "anthropic",
       "openrouter_ids": [
-        "qwen/qwen3.7-flash-20260727"
+        "anthropic/claude-4.8-opus-20260528"
+      ],
+      "sources": {
+        "arena": {
+          "raw": 1481.5103094993417,
+          "normalized": 17.8,
+          "votes": 63974
+        },
+        "openrouter": {
+          "raw": 1450396671984,
+          "normalized": 84.7
+        },
+        "flexprice_tasks": {
+          "raw": 79.6,
+          "normalized": 94.8
+        }
+      },
+      "source_count": 3,
+      "metric_basis": {
+        "capability": "derived",
+        "preference": "observed",
+        "adoption": "observed"
+      },
+      "metrics": {
+        "capability": 60.1,
+        "preference": 35.7,
+        "adoption": 84.7
+      },
+      "ranked": true,
+      "overall": 67.6,
+      "rank": 46
+    },
+    {
+      "id": "anthropic/claude-sonnet-5-20260630",
+      "label": "Anthropic: Claude Sonnet 5",
+      "creator": "anthropic",
+      "openrouter_ids": [
+        "anthropic/claude-sonnet-5-20260630"
+      ],
+      "sources": {
+        "arena": {
+          "raw": 1461.819473721467,
+          "normalized": 12.5,
+          "votes": 45739
+        },
+        "openrouter": {
+          "raw": 5659625969035,
+          "normalized": 90.2
+        },
+        "flexprice_tasks": {
+          "raw": 78.1,
+          "normalized": 91.4
+        }
+      },
+      "source_count": 3,
+      "metric_basis": {
+        "capability": "derived",
+        "preference": "observed",
+        "adoption": "observed"
+      },
+      "metrics": {
+        "capability": 60.1,
+        "preference": 33.8,
+        "adoption": 90.2
+      },
+      "ranked": true,
+      "overall": 67.4,
+      "rank": 47
+    },
+    {
+      "id": "x-ai/grok-4.20-20260309",
+      "label": "SpaceXAI: Grok 4.20",
+      "creator": "x-ai",
+      "openrouter_ids": [
+        "x-ai/grok-4.20-20260309"
       ],
       "sources": {
         "openrouter": {
-          "raw": 1540455348017,
-          "normalized": 85.0
+          "raw": 135178660758,
+          "normalized": 75.2
+        },
+        "flexprice_tasks": {
+          "raw": 64.2,
+          "normalized": 60.1
         }
       },
-      "source_count": 1,
+      "source_count": 2,
       "metric_basis": {
         "capability": "derived",
         "preference": "derived",
         "adoption": "observed"
       },
       "metrics": {
-        "capability": 37.4,
-        "preference": 89.7,
-        "adoption": 85.0
+        "capability": 60.5,
+        "preference": 74.4,
+        "adoption": 75.2
       },
       "ranked": true,
-      "overall": 67.6,
-      "rank": 46
+      "overall": 66.8,
+      "rank": 48
     },
     {
       "id": "openai/gpt-6-astra-pro-20260903",
@@ -1490,7 +1634,44 @@
       },
       "ranked": true,
       "overall": 66.7,
-      "rank": 47
+      "rank": 49
+    },
+    {
+      "id": "anthropic/claude-5-fable-20260609",
+      "label": "Anthropic: Claude Fable 5",
+      "creator": "anthropic",
+      "openrouter_ids": [
+        "anthropic/claude-5-fable-20260609"
+      ],
+      "sources": {
+        "arena": {
+          "raw": 1504.270990068727,
+          "normalized": 23.9,
+          "votes": 38387
+        },
+        "openrouter": {
+          "raw": 290284608921,
+          "normalized": 78.3
+        },
+        "flexprice_tasks": {
+          "raw": 79.5,
+          "normalized": 94.6
+        }
+      },
+      "source_count": 3,
+      "metric_basis": {
+        "capability": "derived",
+        "preference": "observed",
+        "adoption": "observed"
+      },
+      "metrics": {
+        "capability": 60.1,
+        "preference": 37.2,
+        "adoption": 78.3
+      },
+      "ranked": true,
+      "overall": 66.6,
+      "rank": 50
     },
     {
       "id": "z-ai/glm-5.3-flash-20260826",
@@ -1527,7 +1708,7 @@
       },
       "ranked": true,
       "overall": 66.6,
-      "rank": 48
+      "rank": 51
     },
     {
       "id": "meta/muse-spark-1.2-contributor-20260805",
@@ -1555,7 +1736,7 @@
       },
       "ranked": true,
       "overall": 66.3,
-      "rank": 49
+      "rank": 52
     },
     {
       "id": "openai/gpt-4.1-mini-2025-04-14",
@@ -1583,7 +1764,7 @@
       },
       "ranked": true,
       "overall": 66.0,
-      "rank": 50
+      "rank": 53
     },
     {
       "id": "openai/gpt-4.1-nano-2025-04-14",
@@ -1611,7 +1792,44 @@
       },
       "ranked": true,
       "overall": 65.9,
-      "rank": 51
+      "rank": 54
+    },
+    {
+      "id": "openai/gpt-5.5-20260423",
+      "label": "OpenAI: GPT-5.5",
+      "creator": "openai",
+      "openrouter_ids": [
+        "openai/gpt-5.5-20260423"
+      ],
+      "sources": {
+        "arena": {
+          "raw": 1481.4362937466917,
+          "normalized": 17.8,
+          "votes": 69202
+        },
+        "openrouter": {
+          "raw": 269085591515,
+          "normalized": 78.0
+        },
+        "flexprice_tasks": {
+          "raw": 78.6,
+          "normalized": 92.6
+        }
+      },
+      "source_count": 3,
+      "metric_basis": {
+        "capability": "derived",
+        "preference": "observed",
+        "adoption": "observed"
+      },
+      "metrics": {
+        "capability": 60.4,
+        "preference": 34.5,
+        "adoption": 78.0
+      },
+      "ranked": true,
+      "overall": 65.5,
+      "rank": 55
     },
     {
       "id": "google/gemini-3.7-flash-20260813",
@@ -1644,7 +1862,7 @@
       },
       "ranked": true,
       "overall": 65.4,
-      "rank": 52
+      "rank": 56
     },
     {
       "id": "xiaomi/mimo-v2.6-pro-20260921",
@@ -1681,7 +1899,7 @@
       },
       "ranked": true,
       "overall": 65.4,
-      "rank": 53
+      "rank": 57
     },
     {
       "id": "nex-agi/nex-n2.5-pro-20260907",
@@ -1709,7 +1927,7 @@
       },
       "ranked": true,
       "overall": 65.2,
-      "rank": 54
+      "rank": 58
     },
     {
       "id": "meta/muse-spark-1.2-20260805",
@@ -1737,7 +1955,7 @@
       },
       "ranked": true,
       "overall": 65.0,
-      "rank": 55
+      "rank": 59
     },
     {
       "id": "qwen/qwen3.6-plus-04-02",
@@ -1765,7 +1983,7 @@
       },
       "ranked": true,
       "overall": 64.3,
-      "rank": 56
+      "rank": 60
     },
     {
       "id": "openai/gpt-5.3-codex-20260224",
@@ -1797,7 +2015,7 @@
       },
       "ranked": true,
       "overall": 64.0,
-      "rank": 57
+      "rank": 61
     },
     {
       "id": "moonshotai/kimi-k2.5-0127",
@@ -1825,7 +2043,7 @@
       },
       "ranked": true,
       "overall": 63.6,
-      "rank": 58
+      "rank": 62
     },
     {
       "id": "openai/gpt-5.6-terra-pro-20260709",
@@ -1853,7 +2071,7 @@
       },
       "ranked": true,
       "overall": 63.6,
-      "rank": 59
+      "rank": 63
     },
     {
       "id": "inclusionai/ling-3.0-flash-fin-20260827",
@@ -1885,7 +2103,7 @@
       },
       "ranked": true,
       "overall": 63.3,
-      "rank": 60
+      "rank": 64
     },
     {
       "id": "openai/gpt-4.1-2025-04-14",
@@ -1913,7 +2131,7 @@
       },
       "ranked": true,
       "overall": 63.2,
-      "rank": 61
+      "rank": 65
     },
     {
       "id": "meta/muse-spark-1.1-20260709",
@@ -1941,7 +2159,7 @@
       },
       "ranked": true,
       "overall": 63.1,
-      "rank": 62
+      "rank": 66
     },
     {
       "id": "qwen/qwen3.6-flash",
@@ -1969,7 +2187,7 @@
       },
       "ranked": true,
       "overall": 63.1,
-      "rank": 63
+      "rank": 67
     },
     {
       "id": "nvidia/nemotron-3-ultra-550b-a55b-20260604",
@@ -1997,7 +2215,39 @@
       },
       "ranked": true,
       "overall": 63.0,
-      "rank": 64
+      "rank": 68
+    },
+    {
+      "id": "deepseek/deepseek-v3.2-20251201",
+      "label": "DeepSeek: DeepSeek V3.2",
+      "creator": "deepseek",
+      "openrouter_ids": [
+        "deepseek/deepseek-v3.2-20251201"
+      ],
+      "sources": {
+        "openrouter": {
+          "raw": 1710415447885,
+          "normalized": 85.4
+        },
+        "flexprice_tasks": {
+          "raw": 66.1,
+          "normalized": 64.4
+        }
+      },
+      "source_count": 2,
+      "metric_basis": {
+        "capability": "derived",
+        "preference": "derived",
+        "adoption": "observed"
+      },
+      "metrics": {
+        "capability": 26.5,
+        "preference": 87.1,
+        "adoption": 85.4
+      },
+      "ranked": true,
+      "overall": 62.9,
+      "rank": 69
     },
     {
       "id": "stepfun/step-3.7-flash-20260528",
@@ -2025,7 +2275,7 @@
       },
       "ranked": true,
       "overall": 62.9,
-      "rank": 65
+      "rank": 70
     },
     {
       "id": "thinkingmachines/inkling-20260715",
@@ -2057,7 +2307,7 @@
       },
       "ranked": true,
       "overall": 62.8,
-      "rank": 66
+      "rank": 71
     },
     {
       "id": "qwen/qwen3.5-35b-a3b-20260224",
@@ -2085,7 +2335,7 @@
       },
       "ranked": true,
       "overall": 62.7,
-      "rank": 67
+      "rank": 72
     },
     {
       "id": "openai/gpt-4o-mini",
@@ -2113,35 +2363,7 @@
       },
       "ranked": true,
       "overall": 62.6,
-      "rank": 68
-    },
-    {
-      "id": "deepseek/deepseek-v3.2-20251201",
-      "label": "DeepSeek: DeepSeek V3.2",
-      "creator": "deepseek",
-      "openrouter_ids": [
-        "deepseek/deepseek-v3.2-20251201"
-      ],
-      "sources": {
-        "openrouter": {
-          "raw": 1710415447885,
-          "normalized": 85.4
-        }
-      },
-      "source_count": 1,
-      "metric_basis": {
-        "capability": "derived",
-        "preference": "derived",
-        "adoption": "observed"
-      },
-      "metrics": {
-        "capability": 26.5,
-        "preference": 87.1,
-        "adoption": 85.4
-      },
-      "ranked": true,
-      "overall": 62.4,
-      "rank": 69
+      "rank": 73
     },
     {
       "id": "openai/gpt-6-sol-pro-20260922",
@@ -2169,7 +2391,7 @@
       },
       "ranked": true,
       "overall": 62.4,
-      "rank": 70
+      "rank": 74
     },
     {
       "id": "inclusionai/ling-3.0-flash-vl-20260910",
@@ -2201,35 +2423,39 @@
       },
       "ranked": true,
       "overall": 62.2,
-      "rank": 71
+      "rank": 75
     },
     {
-      "id": "nvidia/nemotron-3-super-120b-a12b-20230311",
-      "label": "NVIDIA: Nemotron 3 Super",
-      "creator": "nvidia",
+      "id": "mistralai/mistral-large-2512",
+      "label": "Mistral: Mistral Large 3 2512",
+      "creator": "mistralai",
       "openrouter_ids": [
-        "nvidia/nemotron-3-super-120b-a12b-20230311"
+        "mistralai/mistral-large-2512"
       ],
       "sources": {
         "openrouter": {
-          "raw": 1538662239751,
-          "normalized": 85.0
+          "raw": 19830009722,
+          "normalized": 67.6
+        },
+        "flexprice_tasks": {
+          "raw": 72.4,
+          "normalized": 78.6
         }
       },
-      "source_count": 1,
+      "source_count": 2,
       "metric_basis": {
         "capability": "derived",
         "preference": "derived",
         "adoption": "observed"
       },
       "metrics": {
-        "capability": 32.2,
-        "preference": 79.4,
-        "adoption": 85.0
+        "capability": 38.9,
+        "preference": 69.1,
+        "adoption": 67.6
       },
       "ranked": true,
-      "overall": 61.9,
-      "rank": 72
+      "overall": 62.1,
+      "rank": 76
     },
     {
       "id": "qwen/qwen3.8-omni-flash-20260918",
@@ -2257,7 +2483,7 @@
       },
       "ranked": true,
       "overall": 61.6,
-      "rank": 73
+      "rank": 77
     },
     {
       "id": "google/gemma-4-26b-a4b-it-20260403",
@@ -2289,7 +2515,7 @@
       },
       "ranked": true,
       "overall": 61.4,
-      "rank": 74
+      "rank": 78
     },
     {
       "id": "poolside/laguna-s-2.1-20260720",
@@ -2317,7 +2543,7 @@
       },
       "ranked": true,
       "overall": 61.3,
-      "rank": 75
+      "rank": 79
     },
     {
       "id": "thinkingmachines/inkling-small-20260730",
@@ -2349,7 +2575,7 @@
       },
       "ranked": true,
       "overall": 61.3,
-      "rank": 76
+      "rank": 80
     },
     {
       "id": "xiaomi/mimo-v2.6-pro-ultraspeed-20260921",
@@ -2377,7 +2603,7 @@
       },
       "ranked": true,
       "overall": 61.3,
-      "rank": 77
+      "rank": 81
     },
     {
       "id": "anthropic/claude-4.6-sonnet-20260217",
@@ -2410,7 +2636,7 @@
       },
       "ranked": true,
       "overall": 61.2,
-      "rank": 78
+      "rank": 82
     },
     {
       "id": "openai/gpt-6.1-sol-pro-20260929",
@@ -2438,7 +2664,7 @@
       },
       "ranked": true,
       "overall": 60.9,
-      "rank": 79
+      "rank": 83
     },
     {
       "id": "qwen/qwen3.6-27b-20260422",
@@ -2466,7 +2692,7 @@
       },
       "ranked": true,
       "overall": 60.9,
-      "rank": 80
+      "rank": 84
     },
     {
       "id": "qwen/qwen3.5-27b-20260224",
@@ -2494,7 +2720,7 @@
       },
       "ranked": true,
       "overall": 60.8,
-      "rank": 81
+      "rank": 85
     },
     {
       "id": "z-ai/glm-5.3-flashx-20260918",
@@ -2522,7 +2748,7 @@
       },
       "ranked": true,
       "overall": 60.8,
-      "rank": 82
+      "rank": 86
     },
     {
       "id": "inclusionai/ling-3.0-flash-20260723",
@@ -2554,7 +2780,7 @@
       },
       "ranked": true,
       "overall": 60.5,
-      "rank": 83
+      "rank": 87
     },
     {
       "id": "bytedance-seed/seed-2.0-mini-20260224",
@@ -2582,7 +2808,7 @@
       },
       "ranked": true,
       "overall": 59.9,
-      "rank": 84
+      "rank": 88
     },
     {
       "id": "xiaomi/mimo-v2.6-flash-20260921",
@@ -2619,7 +2845,7 @@
       },
       "ranked": true,
       "overall": 59.9,
-      "rank": 85
+      "rank": 89
     },
     {
       "id": "anthropic/claude-4.6-opus-20260205",
@@ -2652,40 +2878,7 @@
       },
       "ranked": true,
       "overall": 59.8,
-      "rank": 86
-    },
-    {
-      "id": "anthropic/claude-opus-5-20260723",
-      "label": "Anthropic: Claude Opus 5",
-      "creator": "anthropic",
-      "openrouter_ids": [
-        "anthropic/claude-opus-5-20260723"
-      ],
-      "sources": {
-        "arena": {
-          "raw": 1489.7441630742715,
-          "normalized": 20.0,
-          "votes": 59482
-        },
-        "openrouter": {
-          "raw": 4524500550089,
-          "normalized": 89.3
-        }
-      },
-      "source_count": 2,
-      "metric_basis": {
-        "capability": "derived",
-        "preference": "observed",
-        "adoption": "observed"
-      },
-      "metrics": {
-        "capability": 60.1,
-        "preference": 38.0,
-        "adoption": 89.3
-      },
-      "ranked": true,
-      "overall": 59.7,
-      "rank": 87
+      "rank": 90
     },
     {
       "id": "google/gemini-3.6-flash-20260721",
@@ -2718,7 +2911,7 @@
       },
       "ranked": true,
       "overall": 59.7,
-      "rank": 88
+      "rank": 91
     },
     {
       "id": "meta/muse-glimmer-30b-20260810",
@@ -2746,7 +2939,7 @@
       },
       "ranked": true,
       "overall": 59.6,
-      "rank": 89
+      "rank": 92
     },
     {
       "id": "upstage/solar-mini4-20260922",
@@ -2778,7 +2971,7 @@
       },
       "ranked": true,
       "overall": 59.3,
-      "rank": 90
+      "rank": 93
     },
     {
       "id": "google/gemma-3-27b-it",
@@ -2806,7 +2999,7 @@
       },
       "ranked": true,
       "overall": 59.2,
-      "rank": 91
+      "rank": 94
     },
     {
       "id": "qwen/qwen3.5-plus-20260420",
@@ -2835,7 +3028,7 @@
       },
       "ranked": true,
       "overall": 59.1,
-      "rank": 92
+      "rank": 95
     },
     {
       "id": "sakana/fugu-max-20260911",
@@ -2863,7 +3056,7 @@
       },
       "ranked": true,
       "overall": 58.9,
-      "rank": 93
+      "rank": 96
     },
     {
       "id": "openai/o4-mini-high-2025-04-16",
@@ -2892,7 +3085,7 @@
       },
       "ranked": true,
       "overall": 58.6,
-      "rank": 94
+      "rank": 97
     },
     {
       "id": "qwen/qwen3.8-max-prime-20260923",
@@ -2920,7 +3113,7 @@
       },
       "ranked": true,
       "overall": 58.6,
-      "rank": 95
+      "rank": 98
     },
     {
       "id": "openai/gpt-oss-120b",
@@ -2952,40 +3145,7 @@
       },
       "ranked": true,
       "overall": 58.5,
-      "rank": 96
-    },
-    {
-      "id": "anthropic/claude-sonnet-5-20260630",
-      "label": "Anthropic: Claude Sonnet 5",
-      "creator": "anthropic",
-      "openrouter_ids": [
-        "anthropic/claude-sonnet-5-20260630"
-      ],
-      "sources": {
-        "arena": {
-          "raw": 1461.819473721467,
-          "normalized": 12.5,
-          "votes": 45739
-        },
-        "openrouter": {
-          "raw": 5659625969035,
-          "normalized": 90.2
-        }
-      },
-      "source_count": 2,
-      "metric_basis": {
-        "capability": "derived",
-        "preference": "observed",
-        "adoption": "observed"
-      },
-      "metrics": {
-        "capability": 60.1,
-        "preference": 33.8,
-        "adoption": 90.2
-      },
-      "ranked": true,
-      "overall": 58.4,
-      "rank": 97
+      "rank": 99
     },
     {
       "id": "openai/gpt-5.5-pro-20260423",
@@ -3013,7 +3173,7 @@
       },
       "ranked": true,
       "overall": 58.4,
-      "rank": 98
+      "rank": 100
     },
     {
       "id": "anthropic/claude-4.5-haiku-20251001",
@@ -3045,7 +3205,7 @@
       },
       "ranked": true,
       "overall": 58.3,
-      "rank": 99
+      "rank": 101
     },
     {
       "id": "google/gemini-3.1-pro-preview-customtools-20260219",
@@ -3073,7 +3233,7 @@
       },
       "ranked": true,
       "overall": 58.0,
-      "rank": 100
+      "rank": 102
     },
     {
       "id": "qwen/qwen3.6-35b-a3b-20260415",
@@ -3105,40 +3265,7 @@
       },
       "ranked": true,
       "overall": 57.8,
-      "rank": 101
-    },
-    {
-      "id": "anthropic/claude-4.8-opus-20260528",
-      "label": "Anthropic: Claude Opus 4.8",
-      "creator": "anthropic",
-      "openrouter_ids": [
-        "anthropic/claude-4.8-opus-20260528"
-      ],
-      "sources": {
-        "arena": {
-          "raw": 1481.5103094993417,
-          "normalized": 17.8,
-          "votes": 63974
-        },
-        "openrouter": {
-          "raw": 1450396671984,
-          "normalized": 84.7
-        }
-      },
-      "source_count": 2,
-      "metric_basis": {
-        "capability": "derived",
-        "preference": "observed",
-        "adoption": "observed"
-      },
-      "metrics": {
-        "capability": 60.1,
-        "preference": 35.7,
-        "adoption": 84.7
-      },
-      "ranked": true,
-      "overall": 57.7,
-      "rank": 102
+      "rank": 103
     },
     {
       "id": "nex-agi/nex-n2.5-mini-20260908",
@@ -3166,7 +3293,7 @@
       },
       "ranked": true,
       "overall": 57.7,
-      "rank": 103
+      "rank": 104
     },
     {
       "id": "bytedance-seed/seed-1.6-flash-20250625",
@@ -3194,7 +3321,7 @@
       },
       "ranked": true,
       "overall": 57.5,
-      "rank": 104
+      "rank": 105
     },
     {
       "id": "qwen/qwen3.5-397b-a17b-20260216",
@@ -3226,7 +3353,7 @@
       },
       "ranked": true,
       "overall": 57.0,
-      "rank": 105
+      "rank": 106
     },
     {
       "id": "google/gemini-3.5-flash-20260519",
@@ -3259,7 +3386,7 @@
       },
       "ranked": true,
       "overall": 56.9,
-      "rank": 106
+      "rank": 107
     },
     {
       "id": "anthropic/claude-4.7-opus-20260416",
@@ -3292,7 +3419,7 @@
       },
       "ranked": true,
       "overall": 56.8,
-      "rank": 107
+      "rank": 108
     },
     {
       "id": "deepseek/deepseek-chat-v3.1",
@@ -3320,7 +3447,7 @@
       },
       "ranked": true,
       "overall": 56.8,
-      "rank": 108
+      "rank": 109
     },
     {
       "id": "x-ai/grok-build-0.1-20260520",
@@ -3348,68 +3475,7 @@
       },
       "ranked": true,
       "overall": 56.7,
-      "rank": 109
-    },
-    {
-      "id": "anthropic/claude-5-fable-20260609",
-      "label": "Anthropic: Claude Fable 5",
-      "creator": "anthropic",
-      "openrouter_ids": [
-        "anthropic/claude-5-fable-20260609"
-      ],
-      "sources": {
-        "arena": {
-          "raw": 1504.270990068727,
-          "normalized": 23.9,
-          "votes": 38387
-        },
-        "openrouter": {
-          "raw": 290284608921,
-          "normalized": 78.3
-        }
-      },
-      "source_count": 2,
-      "metric_basis": {
-        "capability": "derived",
-        "preference": "observed",
-        "adoption": "observed"
-      },
-      "metrics": {
-        "capability": 60.1,
-        "preference": 37.2,
-        "adoption": 78.3
-      },
-      "ranked": true,
-      "overall": 56.6,
       "rank": 110
-    },
-    {
-      "id": "mistralai/mistral-large-2512",
-      "label": "Mistral: Mistral Large 3 2512",
-      "creator": "mistralai",
-      "openrouter_ids": [
-        "mistralai/mistral-large-2512"
-      ],
-      "sources": {
-        "openrouter": {
-          "raw": 19830009722,
-          "normalized": 67.6
-        }
-      },
-      "source_count": 1,
-      "metric_basis": {
-        "capability": "derived",
-        "preference": "derived",
-        "adoption": "observed"
-      },
-      "metrics": {
-        "capability": 38.9,
-        "preference": 69.1,
-        "adoption": 67.6
-      },
-      "ranked": true,
-      "overall": 56.6,
-      "rank": 111
     },
     {
       "id": "anthropic/claude-4-sonnet-20250522",
@@ -3437,7 +3503,80 @@
       },
       "ranked": true,
       "overall": 56.5,
+      "rank": 111
+    },
+    {
+      "id": "google/gemini-3.5-flash-lite-20260721",
+      "label": "Google: Gemini 3.5 Flash Lite",
+      "creator": "google",
+      "openrouter_ids": [
+        "google/gemini-3.5-flash-lite-20260721"
+      ],
+      "sources": {
+        "artificial_analysis": {
+          "raw": 22.1685424839812,
+          "normalized": 32.5
+        },
+        "arena": {
+          "raw": 1454.9663643131453,
+          "normalized": 10.6,
+          "votes": 35763
+        },
+        "openrouter": {
+          "raw": 959009814618,
+          "normalized": 83.1
+        },
+        "flexprice_tasks": {
+          "raw": 76.2,
+          "normalized": 87.2
+        }
+      },
+      "source_count": 4,
+      "metric_basis": {
+        "capability": "observed",
+        "preference": "observed",
+        "adoption": "observed"
+      },
+      "metrics": {
+        "capability": 32.5,
+        "preference": 33.4,
+        "adoption": 83.1
+      },
+      "ranked": true,
+      "overall": 56.5,
       "rank": 112
+    },
+    {
+      "id": "nvidia/nemotron-3-super-120b-a12b-20230311",
+      "label": "NVIDIA: Nemotron 3 Super",
+      "creator": "nvidia",
+      "openrouter_ids": [
+        "nvidia/nemotron-3-super-120b-a12b-20230311"
+      ],
+      "sources": {
+        "openrouter": {
+          "raw": 1538662239751,
+          "normalized": 85.0
+        },
+        "flexprice_tasks": {
+          "raw": 55.2,
+          "normalized": 39.9
+        }
+      },
+      "source_count": 2,
+      "metric_basis": {
+        "capability": "derived",
+        "preference": "derived",
+        "adoption": "observed"
+      },
+      "metrics": {
+        "capability": 32.2,
+        "preference": 79.4,
+        "adoption": 85.0
+      },
+      "ranked": true,
+      "overall": 56.5,
+      "rank": 113
     },
     {
       "id": "sakana/fugu-ultra-v2-20260911",
@@ -3465,7 +3604,7 @@
       },
       "ranked": true,
       "overall": 56.5,
-      "rank": 113
+      "rank": 114
     },
     {
       "id": "z-ai/glm-4.7-flash-20260119",
@@ -3493,7 +3632,7 @@
       },
       "ranked": true,
       "overall": 56.5,
-      "rank": 114
+      "rank": 115
     },
     {
       "id": "mistralai/mistral-nemo",
@@ -3521,7 +3660,7 @@
       },
       "ranked": true,
       "overall": 56.3,
-      "rank": 115
+      "rank": 116
     },
     {
       "id": "fireworks/ember-1-20260923",
@@ -3549,7 +3688,7 @@
       },
       "ranked": true,
       "overall": 56.0,
-      "rank": 116
+      "rank": 117
     },
     {
       "id": "qwen/qwen3-235b-a22b-07-25",
@@ -3577,7 +3716,43 @@
       },
       "ranked": true,
       "overall": 56.0,
-      "rank": 117
+      "rank": 118
+    },
+    {
+      "id": "mistralai/mistral-medium-3.5-20260430",
+      "label": "Mistral: Mistral Medium 3.5",
+      "creator": "mistralai",
+      "openrouter_ids": [
+        "mistralai/mistral-medium-3.5-20260430"
+      ],
+      "sources": {
+        "artificial_analysis": {
+          "raw": 14.1889227802691,
+          "normalized": 17.3
+        },
+        "openrouter": {
+          "raw": 18293036942,
+          "normalized": 67.2
+        },
+        "flexprice_tasks": {
+          "raw": 73.8,
+          "normalized": 81.8
+        }
+      },
+      "source_count": 3,
+      "metric_basis": {
+        "capability": "observed",
+        "preference": "derived",
+        "adoption": "observed"
+      },
+      "metrics": {
+        "capability": 17.3,
+        "preference": 66.9,
+        "adoption": 67.2
+      },
+      "ranked": true,
+      "overall": 55.8,
+      "rank": 119
     },
     {
       "id": "nvidia/nemotron-3.5-lightning-20260807",
@@ -3609,7 +3784,7 @@
       },
       "ranked": true,
       "overall": 55.8,
-      "rank": 118
+      "rank": 120
     },
     {
       "id": "mistralai/ministral-8b-2512",
@@ -3637,40 +3812,7 @@
       },
       "ranked": true,
       "overall": 55.7,
-      "rank": 119
-    },
-    {
-      "id": "openai/gpt-5.5-20260423",
-      "label": "OpenAI: GPT-5.5",
-      "creator": "openai",
-      "openrouter_ids": [
-        "openai/gpt-5.5-20260423"
-      ],
-      "sources": {
-        "arena": {
-          "raw": 1481.4362937466917,
-          "normalized": 17.8,
-          "votes": 69202
-        },
-        "openrouter": {
-          "raw": 269085591515,
-          "normalized": 78.0
-        }
-      },
-      "source_count": 2,
-      "metric_basis": {
-        "capability": "derived",
-        "preference": "observed",
-        "adoption": "observed"
-      },
-      "metrics": {
-        "capability": 60.4,
-        "preference": 34.5,
-        "adoption": 78.0
-      },
-      "ranked": true,
-      "overall": 55.7,
-      "rank": 120
+      "rank": 121
     },
     {
       "id": "bytedance-seed/seed-2.0-lite-20260309",
@@ -3698,7 +3840,7 @@
       },
       "ranked": true,
       "overall": 55.6,
-      "rank": 121
+      "rank": 122
     },
     {
       "id": "meta-llama/llama-3.1-8b-instruct",
@@ -3726,7 +3868,7 @@
       },
       "ranked": true,
       "overall": 55.6,
-      "rank": 122
+      "rank": 123
     },
     {
       "id": "openai/gpt-5.4-20260305",
@@ -3759,7 +3901,7 @@
       },
       "ranked": true,
       "overall": 55.6,
-      "rank": 123
+      "rank": 124
     },
     {
       "id": "qwen/qwen3-vl-235b-a22b-instruct",
@@ -3787,7 +3929,7 @@
       },
       "ranked": true,
       "overall": 55.6,
-      "rank": 124
+      "rank": 125
     },
     {
       "id": "mistralai/mistral-small-3.2-24b-instruct-2506",
@@ -3815,34 +3957,6 @@
       },
       "ranked": true,
       "overall": 55.4,
-      "rank": 125
-    },
-    {
-      "id": "amazon/nova-2-lite-v1",
-      "label": "Amazon: Nova 2 Lite",
-      "creator": "amazon",
-      "openrouter_ids": [
-        "amazon/nova-2-lite-v1"
-      ],
-      "sources": {
-        "openrouter": {
-          "raw": 5442201266,
-          "normalized": 62.4
-        }
-      },
-      "source_count": 1,
-      "metric_basis": {
-        "capability": "derived",
-        "preference": "derived",
-        "adoption": "observed"
-      },
-      "metrics": {
-        "capability": 44.1,
-        "preference": 63.0,
-        "adoption": 62.4
-      },
-      "ranked": true,
-      "overall": 55.3,
       "rank": 126
     },
     {
@@ -4130,43 +4244,6 @@
       "rank": 136
     },
     {
-      "id": "minimax/minimax-m3-20260531",
-      "label": "MiniMax: MiniMax M3",
-      "creator": "minimax",
-      "openrouter_ids": [
-        "minimax/minimax-m3-20260531"
-      ],
-      "sources": {
-        "artificial_analysis": {
-          "raw": 29.2202932236316,
-          "normalized": 45.9
-        },
-        "arena": {
-          "raw": 1482.0361632685358,
-          "normalized": 18.0,
-          "votes": 17613
-        },
-        "openrouter": {
-          "raw": 7445886605286,
-          "normalized": 91.3
-        }
-      },
-      "source_count": 3,
-      "metric_basis": {
-        "capability": "observed",
-        "preference": "observed",
-        "adoption": "observed"
-      },
-      "metrics": {
-        "capability": 45.9,
-        "preference": 37.8,
-        "adoption": 91.3
-      },
-      "ranked": true,
-      "overall": 54.4,
-      "rank": 137
-    },
-    {
       "id": "minimax/minimax-m2.7-20260318",
       "label": "MiniMax: MiniMax M2.7",
       "creator": "minimax",
@@ -4192,7 +4269,7 @@
       },
       "ranked": true,
       "overall": 53.9,
-      "rank": 138
+      "rank": 137
     },
     {
       "id": "x-ai/grok-4.6-20260810",
@@ -4225,7 +4302,7 @@
       },
       "ranked": true,
       "overall": 53.9,
-      "rank": 139
+      "rank": 138
     },
     {
       "id": "tencent/hy3-20260706",
@@ -4262,35 +4339,7 @@
       },
       "ranked": true,
       "overall": 53.9,
-      "rank": 140
-    },
-    {
-      "id": "mistralai/ministral-14b-2512",
-      "label": "Mistral: Ministral 3 14B 2512",
-      "creator": "mistralai",
-      "openrouter_ids": [
-        "mistralai/ministral-14b-2512"
-      ],
-      "sources": {
-        "openrouter": {
-          "raw": 11855692835,
-          "normalized": 65.5
-        }
-      },
-      "source_count": 1,
-      "metric_basis": {
-        "capability": "derived",
-        "preference": "derived",
-        "adoption": "observed"
-      },
-      "metrics": {
-        "capability": 32.2,
-        "preference": 70.1,
-        "adoption": 65.5
-      },
-      "ranked": true,
-      "overall": 53.8,
-      "rank": 141
+      "rank": 139
     },
     {
       "id": "anthropic/claude-4.5-sonnet-20250929",
@@ -4323,7 +4372,7 @@
       },
       "ranked": true,
       "overall": 53.7,
-      "rank": 142
+      "rank": 140
     },
     {
       "id": "nvidia/nemotron-3-nano-30b-a3b",
@@ -4351,7 +4400,7 @@
       },
       "ranked": true,
       "overall": 53.7,
-      "rank": 143
+      "rank": 141
     },
     {
       "id": "openai/gpt-5.1-codex-mini-20251113",
@@ -4379,7 +4428,7 @@
       },
       "ranked": true,
       "overall": 53.7,
-      "rank": 144
+      "rank": 142
     },
     {
       "id": "qwen/qwen3-32b-04-28",
@@ -4407,7 +4456,39 @@
       },
       "ranked": true,
       "overall": 53.7,
-      "rank": 145
+      "rank": 143
+    },
+    {
+      "id": "qwen/qwen3.7-flash-20260727",
+      "label": "Qwen: Qwen3.7 Flash",
+      "creator": "qwen",
+      "openrouter_ids": [
+        "qwen/qwen3.7-flash-20260727"
+      ],
+      "sources": {
+        "openrouter": {
+          "raw": 1540455348017,
+          "normalized": 85.0
+        },
+        "flexprice_tasks": {
+          "raw": 43.0,
+          "normalized": 12.4
+        }
+      },
+      "source_count": 2,
+      "metric_basis": {
+        "capability": "derived",
+        "preference": "derived",
+        "adoption": "observed"
+      },
+      "metrics": {
+        "capability": 37.4,
+        "preference": 89.7,
+        "adoption": 85.0
+      },
+      "ranked": true,
+      "overall": 53.7,
+      "rank": 144
     },
     {
       "id": "apodex/apodex-1.1-mini-20261001",
@@ -4435,7 +4516,7 @@
       },
       "ranked": true,
       "overall": 53.5,
-      "rank": 146
+      "rank": 145
     },
     {
       "id": "mistralai/mistral-medium-3.1",
@@ -4463,6 +4544,47 @@
       },
       "ranked": true,
       "overall": 53.5,
+      "rank": 146
+    },
+    {
+      "id": "minimax/minimax-m3-20260531",
+      "label": "MiniMax: MiniMax M3",
+      "creator": "minimax",
+      "openrouter_ids": [
+        "minimax/minimax-m3-20260531"
+      ],
+      "sources": {
+        "artificial_analysis": {
+          "raw": 29.2202932236316,
+          "normalized": 45.9
+        },
+        "arena": {
+          "raw": 1482.0361632685358,
+          "normalized": 18.0,
+          "votes": 17613
+        },
+        "openrouter": {
+          "raw": 7445886605286,
+          "normalized": 91.3
+        },
+        "flexprice_tasks": {
+          "raw": 58.7,
+          "normalized": 47.7
+        }
+      },
+      "source_count": 4,
+      "metric_basis": {
+        "capability": "observed",
+        "preference": "observed",
+        "adoption": "observed"
+      },
+      "metrics": {
+        "capability": 45.9,
+        "preference": 37.8,
+        "adoption": 91.3
+      },
+      "ranked": true,
+      "overall": 53.4,
       "rank": 147
     },
     {
@@ -4797,6 +4919,38 @@
       "rank": 158
     },
     {
+      "id": "amazon/nova-2-lite-v1",
+      "label": "Amazon: Nova 2 Lite",
+      "creator": "amazon",
+      "openrouter_ids": [
+        "amazon/nova-2-lite-v1"
+      ],
+      "sources": {
+        "openrouter": {
+          "raw": 5442201266,
+          "normalized": 62.4
+        },
+        "flexprice_tasks": {
+          "raw": 57.3,
+          "normalized": 44.6
+        }
+      },
+      "source_count": 2,
+      "metric_basis": {
+        "capability": "derived",
+        "preference": "derived",
+        "adoption": "observed"
+      },
+      "metrics": {
+        "capability": 44.1,
+        "preference": 63.0,
+        "adoption": 62.4
+      },
+      "ranked": true,
+      "overall": 52.6,
+      "rank": 159
+    },
+    {
       "id": "openai/gpt-oss-safeguard-20b",
       "label": "OpenAI: gpt-oss-safeguard-20b",
       "creator": "openai",
@@ -4822,7 +4976,7 @@
       },
       "ranked": true,
       "overall": 52.5,
-      "rank": 159
+      "rank": 160
     },
     {
       "id": "deepseek/deepseek-v3.1-terminus",
@@ -4850,7 +5004,7 @@
       },
       "ranked": true,
       "overall": 52.4,
-      "rank": 160
+      "rank": 161
     },
     {
       "id": "openai/gpt-5.4-pro-20260305",
@@ -4878,68 +5032,7 @@
       },
       "ranked": true,
       "overall": 52.4,
-      "rank": 161
-    },
-    {
-      "id": "meta-llama/llama-3.3-70b-instruct",
-      "label": "Meta: Llama 3.3 70B Instruct",
-      "creator": "meta-llama",
-      "openrouter_ids": [
-        "meta-llama/llama-3.3-70b-instruct"
-      ],
-      "sources": {
-        "openrouter": {
-          "raw": 158023834065,
-          "normalized": 75.9
-        }
-      },
-      "source_count": 1,
-      "metric_basis": {
-        "capability": "derived",
-        "preference": "derived",
-        "adoption": "observed"
-      },
-      "metrics": {
-        "capability": 10.0,
-        "preference": 82.8,
-        "adoption": 75.9
-      },
-      "ranked": true,
-      "overall": 52.0,
       "rank": 162
-    },
-    {
-      "id": "z-ai/glm-5.2-20260616",
-      "label": "Z.ai: GLM 5.2",
-      "creator": "z-ai",
-      "openrouter_ids": [
-        "z-ai/glm-5.2-20260616"
-      ],
-      "sources": {
-        "arena": {
-          "raw": 1475.7694821463967,
-          "normalized": 16.3,
-          "votes": 45399
-        },
-        "openrouter": {
-          "raw": 6882772775233,
-          "normalized": 91.0
-        }
-      },
-      "source_count": 2,
-      "metric_basis": {
-        "capability": "derived",
-        "preference": "observed",
-        "adoption": "observed"
-      },
-      "metrics": {
-        "capability": 40.5,
-        "preference": 37.3,
-        "adoption": 91.0
-      },
-      "ranked": true,
-      "overall": 52.0,
-      "rank": 163
     },
     {
       "id": "z-ai/glm-4.6-20251208",
@@ -4968,7 +5061,7 @@
       },
       "ranked": true,
       "overall": 51.9,
-      "rank": 164
+      "rank": 163
     },
     {
       "id": "qwen/qwen3.5-122b-a10b-20260224",
@@ -5000,7 +5093,7 @@
       },
       "ranked": true,
       "overall": 51.8,
-      "rank": 165
+      "rank": 164
     },
     {
       "id": "deepseek/deepseek-chat-v3-0324",
@@ -5028,7 +5121,7 @@
       },
       "ranked": true,
       "overall": 51.7,
-      "rank": 166
+      "rank": 165
     },
     {
       "id": "sakana/fugu-ultra-20260615",
@@ -5056,7 +5149,7 @@
       },
       "ranked": true,
       "overall": 51.7,
-      "rank": 167
+      "rank": 166
     },
     {
       "id": "moonshotai/kimi-k2-thinking-20251106",
@@ -5084,35 +5177,7 @@
       },
       "ranked": true,
       "overall": 51.6,
-      "rank": 168
-    },
-    {
-      "id": "deepseek/deepseek-r1-0528",
-      "label": "DeepSeek: R1 0528",
-      "creator": "deepseek",
-      "openrouter_ids": [
-        "deepseek/deepseek-r1-0528"
-      ],
-      "sources": {
-        "openrouter": {
-          "raw": 51749120913,
-          "normalized": 71.4
-        }
-      },
-      "source_count": 1,
-      "metric_basis": {
-        "capability": "derived",
-        "preference": "derived",
-        "adoption": "observed"
-      },
-      "metrics": {
-        "capability": 23.7,
-        "preference": 69.0,
-        "adoption": 71.4
-      },
-      "ranked": true,
-      "overall": 51.5,
-      "rank": 169
+      "rank": 167
     },
     {
       "id": "inception/mercury-2.5-20260908",
@@ -5144,7 +5209,7 @@
       },
       "ranked": true,
       "overall": 51.5,
-      "rank": 170
+      "rank": 168
     },
     {
       "id": "openai/gpt-5.1-codex-max-20251204",
@@ -5172,7 +5237,7 @@
       },
       "ranked": true,
       "overall": 51.3,
-      "rank": 171
+      "rank": 169
     },
     {
       "id": "x-ai/grok-4.20-multi-agent-20260309",
@@ -5200,6 +5265,70 @@
       },
       "ranked": true,
       "overall": 51.3,
+      "rank": 170
+    },
+    {
+      "id": "deepseek/deepseek-r1-0528",
+      "label": "DeepSeek: R1 0528",
+      "creator": "deepseek",
+      "openrouter_ids": [
+        "deepseek/deepseek-r1-0528"
+      ],
+      "sources": {
+        "openrouter": {
+          "raw": 51749120913,
+          "normalized": 71.4
+        },
+        "flexprice_tasks": {
+          "raw": 59.5,
+          "normalized": 49.5
+        }
+      },
+      "source_count": 2,
+      "metric_basis": {
+        "capability": "derived",
+        "preference": "derived",
+        "adoption": "observed"
+      },
+      "metrics": {
+        "capability": 23.7,
+        "preference": 69.0,
+        "adoption": 71.4
+      },
+      "ranked": true,
+      "overall": 51.0,
+      "rank": 171
+    },
+    {
+      "id": "mistralai/ministral-14b-2512",
+      "label": "Mistral: Ministral 3 14B 2512",
+      "creator": "mistralai",
+      "openrouter_ids": [
+        "mistralai/ministral-14b-2512"
+      ],
+      "sources": {
+        "openrouter": {
+          "raw": 11855692835,
+          "normalized": 65.5
+        },
+        "flexprice_tasks": {
+          "raw": 56.1,
+          "normalized": 41.9
+        }
+      },
+      "source_count": 2,
+      "metric_basis": {
+        "capability": "derived",
+        "preference": "derived",
+        "adoption": "observed"
+      },
+      "metrics": {
+        "capability": 32.2,
+        "preference": 70.1,
+        "adoption": 65.5
+      },
+      "ranked": true,
+      "overall": 50.8,
       "rank": 172
     },
     {
@@ -5236,6 +5365,43 @@
       "rank": 173
     },
     {
+      "id": "qwen/qwen3.7-max-20260520",
+      "label": "Qwen: Qwen3.7 Max",
+      "creator": "qwen",
+      "openrouter_ids": [
+        "qwen/qwen3.7-max-20260520"
+      ],
+      "sources": {
+        "arena": {
+          "raw": 1514.9330963762986,
+          "normalized": 26.8,
+          "votes": 8922
+        },
+        "openrouter": {
+          "raw": 72576112948,
+          "normalized": 72.8
+        },
+        "flexprice_tasks": {
+          "raw": 63.1,
+          "normalized": 57.7
+        }
+      },
+      "source_count": 3,
+      "metric_basis": {
+        "capability": "derived",
+        "preference": "observed",
+        "adoption": "observed"
+      },
+      "metrics": {
+        "capability": 40.2,
+        "preference": 38.9,
+        "adoption": 72.8
+      },
+      "ranked": true,
+      "overall": 50.8,
+      "rank": 174
+    },
+    {
       "id": "openai/gpt-4o-2024-08-06",
       "label": "OpenAI: GPT-4o (2024-08-06)",
       "creator": "openai",
@@ -5261,7 +5427,7 @@
       },
       "ranked": true,
       "overall": 50.6,
-      "rank": 174
+      "rank": 175
     },
     {
       "id": "openai/gpt-5.2-pro-20251211",
@@ -5289,7 +5455,7 @@
       },
       "ranked": true,
       "overall": 50.3,
-      "rank": 175
+      "rank": 176
     },
     {
       "id": "cohere/north-mini-code-20260617",
@@ -5321,7 +5487,43 @@
       },
       "ranked": true,
       "overall": 50.0,
-      "rank": 176
+      "rank": 177
+    },
+    {
+      "id": "mistralai/mistral-small-2603",
+      "label": "Mistral: Mistral Small 4",
+      "creator": "mistralai",
+      "openrouter_ids": [
+        "mistralai/mistral-small-2603"
+      ],
+      "sources": {
+        "artificial_analysis": {
+          "raw": 11.2675794141469,
+          "normalized": 11.7
+        },
+        "openrouter": {
+          "raw": 56308340611,
+          "normalized": 71.7
+        },
+        "flexprice_tasks": {
+          "raw": 61.8,
+          "normalized": 54.7
+        }
+      },
+      "source_count": 3,
+      "metric_basis": {
+        "capability": "observed",
+        "preference": "derived",
+        "adoption": "observed"
+      },
+      "metrics": {
+        "capability": 11.7,
+        "preference": 74.0,
+        "adoption": 71.7
+      },
+      "ranked": true,
+      "overall": 50.0,
+      "rank": 178
     },
     {
       "id": "openai/o3-mini-high-2025-01-31",
@@ -5350,7 +5552,7 @@
       },
       "ranked": true,
       "overall": 50.0,
-      "rank": 177
+      "rank": 179
     },
     {
       "id": "poolside/laguna-xs-2.1-20260625",
@@ -5378,7 +5580,7 @@
       },
       "ranked": true,
       "overall": 50.0,
-      "rank": 178
+      "rank": 180
     },
     {
       "id": "amazon/nova-micro-v1",
@@ -5406,7 +5608,7 @@
       },
       "ranked": true,
       "overall": 49.8,
-      "rank": 179
+      "rank": 181
     },
     {
       "id": "inception/mercury-2-20260304",
@@ -5434,7 +5636,7 @@
       },
       "ranked": true,
       "overall": 49.8,
-      "rank": 180
+      "rank": 182
     },
     {
       "id": "bytedance-seed/seed-2.0-code-20260730",
@@ -5462,7 +5664,7 @@
       },
       "ranked": true,
       "overall": 49.6,
-      "rank": 181
+      "rank": 183
     },
     {
       "id": "meituan/longcat-2.0-20260720",
@@ -5494,7 +5696,7 @@
       },
       "ranked": true,
       "overall": 49.5,
-      "rank": 182
+      "rank": 184
     },
     {
       "id": "z-ai/glm-5.3-prime-20260921",
@@ -5522,7 +5724,7 @@
       },
       "ranked": true,
       "overall": 49.5,
-      "rank": 183
+      "rank": 185
     },
     {
       "id": "deepseek/deepseek-chat-v3",
@@ -5550,7 +5752,7 @@
       },
       "ranked": true,
       "overall": 49.4,
-      "rank": 184
+      "rank": 186
     },
     {
       "id": "z-ai/glm-5v-turbo-20260401",
@@ -5578,39 +5780,7 @@
       },
       "ranked": true,
       "overall": 49.3,
-      "rank": 185
-    },
-    {
-      "id": "meta-llama/llama-4-maverick-17b-128e-instruct",
-      "label": "Meta: Llama 4 Maverick",
-      "creator": "meta-llama",
-      "openrouter_ids": [
-        "meta-llama/llama-4-maverick-17b-128e-instruct"
-      ],
-      "sources": {
-        "artificial_analysis": {
-          "raw": 9.9905959756501,
-          "normalized": 9.3
-        },
-        "openrouter": {
-          "raw": 66221756407,
-          "normalized": 72.4
-        }
-      },
-      "source_count": 2,
-      "metric_basis": {
-        "capability": "observed",
-        "preference": "derived",
-        "adoption": "observed"
-      },
-      "metrics": {
-        "capability": 9.3,
-        "preference": 77.2,
-        "adoption": 72.4
-      },
-      "ranked": true,
-      "overall": 48.8,
-      "rank": 186
+      "rank": 187
     },
     {
       "id": "bytedance-seed/seed-1.6-20250625",
@@ -5638,7 +5808,7 @@
       },
       "ranked": true,
       "overall": 48.7,
-      "rank": 187
+      "rank": 188
     },
     {
       "id": "openai/gpt-4o-2024-11-20",
@@ -5666,7 +5836,7 @@
       },
       "ranked": true,
       "overall": 48.7,
-      "rank": 188
+      "rank": 189
     },
     {
       "id": "openai/gpt-5.2-20251211",
@@ -5699,7 +5869,7 @@
       },
       "ranked": true,
       "overall": 48.7,
-      "rank": 189
+      "rank": 190
     },
     {
       "id": "tencent/hy-mt2-1.8b-20260521",
@@ -5727,7 +5897,7 @@
       },
       "ranked": true,
       "overall": 48.6,
-      "rank": 190
+      "rank": 191
     },
     {
       "id": "tencent/hy-mt2-30b-a3b-20260521",
@@ -5755,38 +5925,6 @@
       },
       "ranked": true,
       "overall": 48.6,
-      "rank": 191
-    },
-    {
-      "id": "mistralai/mistral-small-2603",
-      "label": "Mistral: Mistral Small 4",
-      "creator": "mistralai",
-      "openrouter_ids": [
-        "mistralai/mistral-small-2603"
-      ],
-      "sources": {
-        "artificial_analysis": {
-          "raw": 11.2675794141469,
-          "normalized": 11.7
-        },
-        "openrouter": {
-          "raw": 56308340611,
-          "normalized": 71.7
-        }
-      },
-      "source_count": 2,
-      "metric_basis": {
-        "capability": "observed",
-        "preference": "derived",
-        "adoption": "observed"
-      },
-      "metrics": {
-        "capability": 11.7,
-        "preference": 74.0,
-        "adoption": 71.7
-      },
-      "ranked": true,
-      "overall": 48.5,
       "rank": 192
     },
     {
@@ -6047,39 +6185,6 @@
       "rank": 201
     },
     {
-      "id": "qwen/qwen3.7-max-20260520",
-      "label": "Qwen: Qwen3.7 Max",
-      "creator": "qwen",
-      "openrouter_ids": [
-        "qwen/qwen3.7-max-20260520"
-      ],
-      "sources": {
-        "arena": {
-          "raw": 1514.9330963762986,
-          "normalized": 26.8,
-          "votes": 8922
-        },
-        "openrouter": {
-          "raw": 72576112948,
-          "normalized": 72.8
-        }
-      },
-      "source_count": 2,
-      "metric_basis": {
-        "capability": "derived",
-        "preference": "observed",
-        "adoption": "observed"
-      },
-      "metrics": {
-        "capability": 40.2,
-        "preference": 38.9,
-        "adoption": 72.8
-      },
-      "ranked": true,
-      "overall": 47.9,
-      "rank": 202
-    },
-    {
       "id": "tencent/hy-mt2-7b-20260521",
       "label": "Tencent: Hy-MT2-7B",
       "creator": "tencent",
@@ -6105,7 +6210,7 @@
       },
       "ranked": true,
       "overall": 47.9,
-      "rank": 203
+      "rank": 202
     },
     {
       "id": "anthropic/claude-4.5-opus-20251124",
@@ -6138,7 +6243,7 @@
       },
       "ranked": true,
       "overall": 47.8,
-      "rank": 204
+      "rank": 203
     },
     {
       "id": "mistralai/mistral-small-3.1-24b-instruct-2503",
@@ -6166,7 +6271,7 @@
       },
       "ranked": true,
       "overall": 47.7,
-      "rank": 205
+      "rank": 204
     },
     {
       "id": "qwen/qwen-2.5-7b-instruct",
@@ -6194,7 +6299,7 @@
       },
       "ranked": true,
       "overall": 47.7,
-      "rank": 206
+      "rank": 205
     },
     {
       "id": "qwen/qwen3-coder-480b-a35b-07-25",
@@ -6222,7 +6327,7 @@
       },
       "ranked": true,
       "overall": 47.6,
-      "rank": 207
+      "rank": 206
     },
     {
       "id": "qwen/qwen3-next-80b-a3b-instruct-2509",
@@ -6254,7 +6359,7 @@
       },
       "ranked": true,
       "overall": 47.6,
-      "rank": 208
+      "rank": 207
     },
     {
       "id": "inclusionai/ling-3.1-flash-20261002",
@@ -6282,71 +6387,7 @@
       },
       "ranked": true,
       "overall": 47.5,
-      "rank": 209
-    },
-    {
-      "id": "meta-llama/llama-4-scout-17b-16e-instruct",
-      "label": "Meta: Llama 4 Scout",
-      "creator": "meta-llama",
-      "openrouter_ids": [
-        "meta-llama/llama-4-scout-17b-16e-instruct"
-      ],
-      "sources": {
-        "artificial_analysis": {
-          "raw": 8.07503439053102,
-          "normalized": 5.7
-        },
-        "openrouter": {
-          "raw": 88059582115,
-          "normalized": 73.5
-        }
-      },
-      "source_count": 2,
-      "metric_basis": {
-        "capability": "observed",
-        "preference": "derived",
-        "adoption": "observed"
-      },
-      "metrics": {
-        "capability": 5.7,
-        "preference": 76.0,
-        "adoption": 73.5
-      },
-      "ranked": true,
-      "overall": 47.3,
-      "rank": 210
-    },
-    {
-      "id": "mistralai/mistral-medium-3.5-20260430",
-      "label": "Mistral: Mistral Medium 3.5",
-      "creator": "mistralai",
-      "openrouter_ids": [
-        "mistralai/mistral-medium-3.5-20260430"
-      ],
-      "sources": {
-        "artificial_analysis": {
-          "raw": 14.1889227802691,
-          "normalized": 17.3
-        },
-        "openrouter": {
-          "raw": 18293036942,
-          "normalized": 67.2
-        }
-      },
-      "source_count": 2,
-      "metric_basis": {
-        "capability": "observed",
-        "preference": "derived",
-        "adoption": "observed"
-      },
-      "metrics": {
-        "capability": 17.3,
-        "preference": 66.9,
-        "adoption": 67.2
-      },
-      "ranked": true,
-      "overall": 47.1,
-      "rank": 211
+      "rank": 208
     },
     {
       "id": "openai/gpt-5-2025-08-07",
@@ -6379,7 +6420,7 @@
       },
       "ranked": true,
       "overall": 47.1,
-      "rank": 212
+      "rank": 209
     },
     {
       "id": "qwen/qwen3-vl-235b-a22b-thinking",
@@ -6407,7 +6448,7 @@
       },
       "ranked": true,
       "overall": 47.0,
-      "rank": 213
+      "rank": 210
     },
     {
       "id": "qwen/qwen3-vl-30b-a3b-thinking",
@@ -6435,7 +6476,7 @@
       },
       "ranked": true,
       "overall": 47.0,
-      "rank": 214
+      "rank": 211
     },
     {
       "id": "openai/gpt-5-pro-2025-10-06",
@@ -6463,7 +6504,7 @@
       },
       "ranked": true,
       "overall": 46.9,
-      "rank": 215
+      "rank": 212
     },
     {
       "id": "qwen/qwen3-30b-a3b-04-28",
@@ -6491,7 +6532,7 @@
       },
       "ranked": true,
       "overall": 46.9,
-      "rank": 216
+      "rank": 213
     },
     {
       "id": "sakana/namazu-20260811",
@@ -6519,7 +6560,7 @@
       },
       "ranked": true,
       "overall": 46.8,
-      "rank": 217
+      "rank": 214
     },
     {
       "id": "qwen/qwen3-coder-plus",
@@ -6547,7 +6588,7 @@
       },
       "ranked": true,
       "overall": 46.7,
-      "rank": 218
+      "rank": 215
     },
     {
       "id": "anthropic/claude-4.1-opus-20250805",
@@ -6575,7 +6616,7 @@
       },
       "ranked": true,
       "overall": 46.6,
-      "rank": 219
+      "rank": 216
     },
     {
       "id": "z-ai/glm-4.5-air",
@@ -6603,7 +6644,44 @@
       },
       "ranked": true,
       "overall": 46.5,
-      "rank": 220
+      "rank": 217
+    },
+    {
+      "id": "z-ai/glm-5.2-20260616",
+      "label": "Z.ai: GLM 5.2",
+      "creator": "z-ai",
+      "openrouter_ids": [
+        "z-ai/glm-5.2-20260616"
+      ],
+      "sources": {
+        "arena": {
+          "raw": 1475.7694821463967,
+          "normalized": 16.3,
+          "votes": 45399
+        },
+        "openrouter": {
+          "raw": 6882772775233,
+          "normalized": 91.0
+        },
+        "flexprice_tasks": {
+          "raw": 49.7,
+          "normalized": 27.5
+        }
+      },
+      "source_count": 3,
+      "metric_basis": {
+        "capability": "derived",
+        "preference": "observed",
+        "adoption": "observed"
+      },
+      "metrics": {
+        "capability": 40.5,
+        "preference": 37.3,
+        "adoption": 91.0
+      },
+      "ranked": true,
+      "overall": 46.5,
+      "rank": 218
     },
     {
       "id": "ibm-granite/granite-4.2-8b-20260831",
@@ -6635,7 +6713,7 @@
       },
       "ranked": true,
       "overall": 46.2,
-      "rank": 221
+      "rank": 219
     },
     {
       "id": "moonshotai/kimi-k2.7-code-20260612",
@@ -6672,7 +6750,7 @@
       },
       "ranked": true,
       "overall": 46.2,
-      "rank": 222
+      "rank": 220
     },
     {
       "id": "openai/o1-2024-12-17",
@@ -6700,7 +6778,7 @@
       },
       "ranked": true,
       "overall": 46.2,
-      "rank": 223
+      "rank": 221
     },
     {
       "id": "qwen/qwen3.7-plus-20260602",
@@ -6722,9 +6800,13 @@
         "openrouter": {
           "raw": 316992530988,
           "normalized": 78.7
+        },
+        "flexprice_tasks": {
+          "raw": 57.1,
+          "normalized": 44.1
         }
       },
-      "source_count": 3,
+      "source_count": 4,
       "metric_basis": {
         "capability": "observed",
         "preference": "observed",
@@ -6737,7 +6819,7 @@
       },
       "ranked": true,
       "overall": 46.2,
-      "rank": 224
+      "rank": 222
     },
     {
       "id": "qwen/qwen3-8b-04-28",
@@ -6765,7 +6847,7 @@
       },
       "ranked": true,
       "overall": 46.1,
-      "rank": 225
+      "rank": 223
     },
     {
       "id": "mistralai/codestral-2508",
@@ -6793,7 +6875,7 @@
       },
       "ranked": true,
       "overall": 46.0,
-      "rank": 226
+      "rank": 224
     },
     {
       "id": "openai/o3-2025-04-16",
@@ -6825,7 +6907,7 @@
       },
       "ranked": true,
       "overall": 46.0,
-      "rank": 227
+      "rank": 225
     },
     {
       "id": "qwen/qwen2.5-vl-72b-instruct",
@@ -6853,7 +6935,7 @@
       },
       "ranked": true,
       "overall": 45.9,
-      "rank": 228
+      "rank": 226
     },
     {
       "id": "sao10k/l3-lunaris-8b",
@@ -6881,7 +6963,7 @@
       },
       "ranked": true,
       "overall": 45.9,
-      "rank": 229
+      "rank": 227
     },
     {
       "id": "google/gemma-3-4b-it",
@@ -6909,44 +6991,7 @@
       },
       "ranked": true,
       "overall": 45.7,
-      "rank": 230
-    },
-    {
-      "id": "google/gemini-3.5-flash-lite-20260721",
-      "label": "Google: Gemini 3.5 Flash Lite",
-      "creator": "google",
-      "openrouter_ids": [
-        "google/gemini-3.5-flash-lite-20260721"
-      ],
-      "sources": {
-        "artificial_analysis": {
-          "raw": 22.1685424839812,
-          "normalized": 32.5
-        },
-        "arena": {
-          "raw": 1454.9663643131453,
-          "normalized": 10.6,
-          "votes": 35763
-        },
-        "openrouter": {
-          "raw": 959009814618,
-          "normalized": 83.1
-        }
-      },
-      "source_count": 3,
-      "metric_basis": {
-        "capability": "observed",
-        "preference": "observed",
-        "adoption": "observed"
-      },
-      "metrics": {
-        "capability": 32.5,
-        "preference": 33.4,
-        "adoption": 83.1
-      },
-      "ranked": true,
-      "overall": 45.5,
-      "rank": 231
+      "rank": 228
     },
     {
       "id": "mistralai/devstral-2512",
@@ -6974,7 +7019,7 @@
       },
       "ranked": true,
       "overall": 45.5,
-      "rank": 232
+      "rank": 229
     },
     {
       "id": "perplexity/sonar",
@@ -7002,7 +7047,7 @@
       },
       "ranked": true,
       "overall": 45.5,
-      "rank": 233
+      "rank": 230
     },
     {
       "id": "qwen/qwen-plus-2025-07-28",
@@ -7030,7 +7075,7 @@
       },
       "ranked": true,
       "overall": 45.4,
-      "rank": 234
+      "rank": 231
     },
     {
       "id": "qwen/qwen-plus-2025-01-25",
@@ -7058,7 +7103,7 @@
       },
       "ranked": true,
       "overall": 45.4,
-      "rank": 235
+      "rank": 232
     },
     {
       "id": "qwen/qwen3-coder-next-2025-02-03",
@@ -7090,7 +7135,7 @@
       },
       "ranked": true,
       "overall": 45.4,
-      "rank": 236
+      "rank": 233
     },
     {
       "id": "z-ai/glm-5.1-20260406",
@@ -7123,7 +7168,7 @@
       },
       "ranked": true,
       "overall": 45.4,
-      "rank": 237
+      "rank": 234
     },
     {
       "id": "meta-llama/llama-guard-4-12b",
@@ -7151,7 +7196,7 @@
       },
       "ranked": true,
       "overall": 45.3,
-      "rank": 238
+      "rank": 235
     },
     {
       "id": "qwen/qwen3-vl-8b-thinking",
@@ -7179,7 +7224,7 @@
       },
       "ranked": true,
       "overall": 45.3,
-      "rank": 239
+      "rank": 236
     },
     {
       "id": "qwen/qwen3-max",
@@ -7207,7 +7252,7 @@
       },
       "ranked": true,
       "overall": 45.2,
-      "rank": 240
+      "rank": 237
     },
     {
       "id": "qwen/qwen-2.5-72b-instruct",
@@ -7235,7 +7280,7 @@
       },
       "ranked": true,
       "overall": 45.1,
-      "rank": 241
+      "rank": 238
     },
     {
       "id": "amazon/nova-lite-v1",
@@ -7263,7 +7308,7 @@
       },
       "ranked": true,
       "overall": 45.0,
-      "rank": 242
+      "rank": 239
     },
     {
       "id": "liquid/lfm-2.5-2.6b-20260811",
@@ -7295,7 +7340,7 @@
       },
       "ranked": true,
       "overall": 45.0,
-      "rank": 243
+      "rank": 240
     },
     {
       "id": "nvidia/nemotron-3.5-content-safety-20260604",
@@ -7323,7 +7368,7 @@
       },
       "ranked": true,
       "overall": 44.9,
-      "rank": 244
+      "rank": 241
     },
     {
       "id": "meta-llama/llama-3.1-70b-instruct",
@@ -7351,7 +7396,43 @@
       },
       "ranked": true,
       "overall": 44.7,
-      "rank": 245
+      "rank": 242
+    },
+    {
+      "id": "meta-llama/llama-4-maverick-17b-128e-instruct",
+      "label": "Meta: Llama 4 Maverick",
+      "creator": "meta-llama",
+      "openrouter_ids": [
+        "meta-llama/llama-4-maverick-17b-128e-instruct"
+      ],
+      "sources": {
+        "artificial_analysis": {
+          "raw": 9.9905959756501,
+          "normalized": 9.3
+        },
+        "openrouter": {
+          "raw": 66221756407,
+          "normalized": 72.4
+        },
+        "flexprice_tasks": {
+          "raw": 52.0,
+          "normalized": 32.7
+        }
+      },
+      "source_count": 3,
+      "metric_basis": {
+        "capability": "observed",
+        "preference": "derived",
+        "adoption": "observed"
+      },
+      "metrics": {
+        "capability": 9.3,
+        "preference": 77.2,
+        "adoption": 72.4
+      },
+      "ranked": true,
+      "overall": 44.7,
+      "rank": 243
     },
     {
       "id": "qwen/qwen3-max-thinking-20260123",
@@ -7379,7 +7460,7 @@
       },
       "ranked": true,
       "overall": 44.2,
-      "rank": 246
+      "rank": 244
     },
     {
       "id": "unbiased/pareto-20260917",
@@ -7407,7 +7488,7 @@
       },
       "ranked": true,
       "overall": 43.3,
-      "rank": 247
+      "rank": 245
     },
     {
       "id": "minimax/minimax-m1",
@@ -7435,7 +7516,7 @@
       },
       "ranked": true,
       "overall": 43.2,
-      "rank": 248
+      "rank": 246
     },
     {
       "id": "openai/o3-pro-2025-06-10",
@@ -7463,7 +7544,7 @@
       },
       "ranked": true,
       "overall": 43.2,
-      "rank": 249
+      "rank": 247
     },
     {
       "id": "aion-labs/aion-3.0-20260707",
@@ -7491,7 +7572,7 @@
       },
       "ranked": true,
       "overall": 43.1,
-      "rank": 250
+      "rank": 248
     },
     {
       "id": "unbiased/pareto-26.10-preview-20260929",
@@ -7519,7 +7600,7 @@
       },
       "ranked": true,
       "overall": 43.1,
-      "rank": 251
+      "rank": 249
     },
     {
       "id": "z-ai/glm-5-turbo-20260315",
@@ -7547,7 +7628,7 @@
       },
       "ranked": true,
       "overall": 43.1,
-      "rank": 252
+      "rank": 250
     },
     {
       "id": "moonshotai/kimi-k2",
@@ -7575,7 +7656,7 @@
       },
       "ranked": true,
       "overall": 42.8,
-      "rank": 253
+      "rank": 251
     },
     {
       "id": "upstage/solar-pro-3",
@@ -7603,7 +7684,7 @@
       },
       "ranked": true,
       "overall": 42.8,
-      "rank": 254
+      "rank": 252
     },
     {
       "id": "mistralai/mistral-large",
@@ -7631,7 +7712,7 @@
       },
       "ranked": true,
       "overall": 42.7,
-      "rank": 255
+      "rank": 253
     },
     {
       "id": "qwen/qwen3-235b-a22b-04-28",
@@ -7659,7 +7740,7 @@
       },
       "ranked": true,
       "overall": 42.6,
-      "rank": 256
+      "rank": 254
     },
     {
       "id": "stepfun/step-3.5-flash",
@@ -7687,7 +7768,7 @@
       },
       "ranked": true,
       "overall": 42.5,
-      "rank": 257
+      "rank": 255
     },
     {
       "id": "nousresearch/hermes-3-llama-3.1-70b",
@@ -7715,7 +7796,7 @@
       },
       "ranked": true,
       "overall": 42.4,
-      "rank": 258
+      "rank": 256
     },
     {
       "id": "openai/gpt-3.5-turbo",
@@ -7743,7 +7824,7 @@
       },
       "ranked": true,
       "overall": 42.4,
-      "rank": 259
+      "rank": 257
     },
     {
       "id": "perceptron/perceptron-mk1.5-20260925",
@@ -7771,7 +7852,7 @@
       },
       "ranked": true,
       "overall": 42.4,
-      "rank": 260
+      "rank": 258
     },
     {
       "id": "perplexity/sonar-pro",
@@ -7799,7 +7880,7 @@
       },
       "ranked": true,
       "overall": 42.4,
-      "rank": 261
+      "rank": 259
     },
     {
       "id": "qwen/qwen3-235b-a22b-thinking-2507",
@@ -7827,7 +7908,7 @@
       },
       "ranked": true,
       "overall": 42.3,
-      "rank": 262
+      "rank": 260
     },
     {
       "id": "minimax/minimax-m2.1",
@@ -7855,7 +7936,7 @@
       },
       "ranked": true,
       "overall": 42.2,
-      "rank": 263
+      "rank": 261
     },
     {
       "id": "thedrummer/cydonia-24b-v4.1",
@@ -7883,7 +7964,7 @@
       },
       "ranked": true,
       "overall": 42.1,
-      "rank": 264
+      "rank": 262
     },
     {
       "id": "venice/uncensored",
@@ -7911,7 +7992,7 @@
       },
       "ranked": true,
       "overall": 42.1,
-      "rank": 265
+      "rank": 263
     },
     {
       "id": "deepseek/deepseek-r1",
@@ -7939,7 +8020,7 @@
       },
       "ranked": true,
       "overall": 42.0,
-      "rank": 266
+      "rank": 264
     },
     {
       "id": "meta-llama/llama-3.2-3b-instruct",
@@ -7967,7 +8048,7 @@
       },
       "ranked": true,
       "overall": 42.0,
-      "rank": 267
+      "rank": 265
     },
     {
       "id": "mistralai/mistral-large-2407",
@@ -7995,7 +8076,7 @@
       },
       "ranked": true,
       "overall": 42.0,
-      "rank": 268
+      "rank": 266
     },
     {
       "id": "ibm-granite/granite-4.0-h-micro",
@@ -8027,7 +8108,7 @@
       },
       "ranked": true,
       "overall": 41.8,
-      "rank": 269
+      "rank": 267
     },
     {
       "id": "z-ai/glm-5-20260211",
@@ -8060,7 +8141,7 @@
       },
       "ranked": true,
       "overall": 41.6,
-      "rank": 270
+      "rank": 268
     },
     {
       "id": "gryphe/mythomax-l2-13b",
@@ -8088,7 +8169,7 @@
       },
       "ranked": true,
       "overall": 41.4,
-      "rank": 271
+      "rank": 269
     },
     {
       "id": "perceptron/perceptron-mk1-20260512",
@@ -8116,7 +8197,7 @@
       },
       "ranked": true,
       "overall": 41.4,
-      "rank": 272
+      "rank": 270
     },
     {
       "id": "perplexity/sonar-pro-search",
@@ -8144,7 +8225,7 @@
       },
       "ranked": true,
       "overall": 41.4,
-      "rank": 273
+      "rank": 271
     },
     {
       "id": "qwen/qwen3-next-80b-a3b-thinking-2509",
@@ -8172,7 +8253,7 @@
       },
       "ranked": true,
       "overall": 41.3,
-      "rank": 274
+      "rank": 272
     },
     {
       "id": "z-ai/glm-4.5",
@@ -8200,7 +8281,39 @@
       },
       "ranked": true,
       "overall": 41.3,
-      "rank": 275
+      "rank": 273
+    },
+    {
+      "id": "meta-llama/llama-3.3-70b-instruct",
+      "label": "Meta: Llama 3.3 70B Instruct",
+      "creator": "meta-llama",
+      "openrouter_ids": [
+        "meta-llama/llama-3.3-70b-instruct"
+      ],
+      "sources": {
+        "openrouter": {
+          "raw": 158023834065,
+          "normalized": 75.9
+        },
+        "flexprice_tasks": {
+          "raw": 41.1,
+          "normalized": 8.1
+        }
+      },
+      "source_count": 2,
+      "metric_basis": {
+        "capability": "derived",
+        "preference": "derived",
+        "adoption": "observed"
+      },
+      "metrics": {
+        "capability": 10.0,
+        "preference": 82.8,
+        "adoption": 75.9
+      },
+      "ranked": true,
+      "overall": 40.9,
+      "rank": 274
     },
     {
       "id": "qwen/qwen3-coder-flash",
@@ -8228,7 +8341,7 @@
       },
       "ranked": true,
       "overall": 40.9,
-      "rank": 276
+      "rank": 275
     },
     {
       "id": "arcee-ai/trinity-large-thinking",
@@ -8260,7 +8373,7 @@
       },
       "ranked": true,
       "overall": 40.8,
-      "rank": 277
+      "rank": 276
     },
     {
       "id": "thedrummer/unslopnemo-12b",
@@ -8288,7 +8401,7 @@
       },
       "ranked": true,
       "overall": 40.8,
-      "rank": 278
+      "rank": 277
     },
     {
       "id": "google/gemma-4-31b-it-20260402",
@@ -8325,7 +8438,7 @@
       },
       "ranked": true,
       "overall": 40.6,
-      "rank": 279
+      "rank": 278
     },
     {
       "id": "openai/gpt-4o-2024-05-13",
@@ -8353,7 +8466,7 @@
       },
       "ranked": true,
       "overall": 40.6,
-      "rank": 280
+      "rank": 279
     },
     {
       "id": "z-ai/glm-4.7-20251222",
@@ -8386,7 +8499,7 @@
       },
       "ranked": true,
       "overall": 40.6,
-      "rank": 281
+      "rank": 280
     },
     {
       "id": "nousresearch/hermes-3-llama-3.1-405b",
@@ -8414,7 +8527,7 @@
       },
       "ranked": true,
       "overall": 40.4,
-      "rank": 282
+      "rank": 281
     },
     {
       "id": "microsoft/wizardlm-2-8x22b",
@@ -8442,7 +8555,7 @@
       },
       "ranked": true,
       "overall": 40.4,
-      "rank": 283
+      "rank": 282
     },
     {
       "id": "mistralai/voxtral-small-24b-2507",
@@ -8470,7 +8583,7 @@
       },
       "ranked": true,
       "overall": 40.3,
-      "rank": 284
+      "rank": 283
     },
     {
       "id": "aion-labs/aion-2.0-20260223",
@@ -8498,7 +8611,7 @@
       },
       "ranked": true,
       "overall": 40.1,
-      "rank": 285
+      "rank": 284
     },
     {
       "id": "aion-labs/aion-3.5-20260923",
@@ -8526,7 +8639,7 @@
       },
       "ranked": true,
       "overall": 40.0,
-      "rank": 286
+      "rank": 285
     },
     {
       "id": "aion-labs/aion-3.0-mini-20260707",
@@ -8554,7 +8667,7 @@
       },
       "ranked": true,
       "overall": 40.0,
-      "rank": 287
+      "rank": 286
     },
     {
       "id": "nousresearch/hermes-4-405b",
@@ -8582,7 +8695,7 @@
       },
       "ranked": true,
       "overall": 39.9,
-      "rank": 288
+      "rank": 287
     },
     {
       "id": "minimax/minimax-m2-her-20260123",
@@ -8610,7 +8723,7 @@
       },
       "ranked": true,
       "overall": 39.7,
-      "rank": 289
+      "rank": 288
     },
     {
       "id": "z-ai/glm-4.5v",
@@ -8638,7 +8751,7 @@
       },
       "ranked": true,
       "overall": 39.6,
-      "rank": 290
+      "rank": 289
     },
     {
       "id": "cohere/command-r7b-12-2024",
@@ -8666,7 +8779,7 @@
       },
       "ranked": true,
       "overall": 39.3,
-      "rank": 291
+      "rank": 290
     },
     {
       "id": "microsoft/phi-4",
@@ -8698,7 +8811,7 @@
       },
       "ranked": true,
       "overall": 39.1,
-      "rank": 292
+      "rank": 291
     },
     {
       "id": "cohere/command-r-08-2024",
@@ -8726,7 +8839,7 @@
       },
       "ranked": true,
       "overall": 39.0,
-      "rank": 293
+      "rank": 292
     },
     {
       "id": "meta-llama/llama-3.2-1b-instruct",
@@ -8754,7 +8867,7 @@
       },
       "ranked": true,
       "overall": 39.0,
-      "rank": 294
+      "rank": 293
     },
     {
       "id": "cohere/command-a-plus-05-2026",
@@ -8786,7 +8899,7 @@
       },
       "ranked": true,
       "overall": 38.8,
-      "rank": 295
+      "rank": 294
     },
     {
       "id": "minimax/minimax-01",
@@ -8814,7 +8927,7 @@
       },
       "ranked": true,
       "overall": 38.7,
-      "rank": 296
+      "rank": 295
     },
     {
       "id": "mistralai/mixtral-8x22b-instruct",
@@ -8842,7 +8955,7 @@
       },
       "ranked": true,
       "overall": 38.4,
-      "rank": 297
+      "rank": 296
     },
     {
       "id": "sao10k/l3.3-euryale-70b-v2.3",
@@ -8870,7 +8983,7 @@
       },
       "ranked": true,
       "overall": 38.3,
-      "rank": 298
+      "rank": 297
     },
     {
       "id": "bytedance/ui-tars-1.5-7b",
@@ -8898,7 +9011,7 @@
       },
       "ranked": true,
       "overall": 38.0,
-      "rank": 299
+      "rank": 298
     },
     {
       "id": "openai/gpt-4-turbo",
@@ -8926,7 +9039,7 @@
       },
       "ranked": true,
       "overall": 37.9,
-      "rank": 300
+      "rank": 299
     },
     {
       "id": "qwen/qwen-2.5-coder-32b-instruct",
@@ -8954,7 +9067,7 @@
       },
       "ranked": true,
       "overall": 37.9,
-      "rank": 301
+      "rank": 300
     },
     {
       "id": "sao10k/l3.1-euryale-70b",
@@ -8982,7 +9095,7 @@
       },
       "ranked": true,
       "overall": 37.6,
-      "rank": 302
+      "rank": 301
     },
     {
       "id": "aion-labs/aion-3.5-mini-20260923",
@@ -9010,7 +9123,7 @@
       },
       "ranked": true,
       "overall": 37.5,
-      "rank": 303
+      "rank": 302
     },
     {
       "id": "perplexity/sonar-reasoning-pro",
@@ -9038,7 +9151,7 @@
       },
       "ranked": true,
       "overall": 37.2,
-      "rank": 304
+      "rank": 303
     },
     {
       "id": "amazon/nova-premier-v1",
@@ -9066,7 +9179,7 @@
       },
       "ranked": true,
       "overall": 37.1,
-      "rank": 305
+      "rank": 304
     },
     {
       "id": "inference-net/schematron-v2-turbo-20260902",
@@ -9094,7 +9207,7 @@
       },
       "ranked": true,
       "overall": 37.1,
-      "rank": 306
+      "rank": 305
     },
     {
       "id": "google/gemma-2-27b-it",
@@ -9122,7 +9235,7 @@
       },
       "ranked": true,
       "overall": 37.0,
-      "rank": 307
+      "rank": 306
     },
     {
       "id": "thedrummer/skyfall-36b-v2",
@@ -9150,7 +9263,7 @@
       },
       "ranked": true,
       "overall": 36.7,
-      "rank": 308
+      "rank": 307
     },
     {
       "id": "qwen/qwen3-30b-a3b-thinking-2507",
@@ -9178,7 +9291,7 @@
       },
       "ranked": true,
       "overall": 36.5,
-      "rank": 309
+      "rank": 308
     },
     {
       "id": "undi95/remm-slerp-l2-13b",
@@ -9206,7 +9319,7 @@
       },
       "ranked": true,
       "overall": 36.2,
-      "rank": 310
+      "rank": 309
     },
     {
       "id": "tencent/hunyuan-a13b-instruct",
@@ -9234,7 +9347,7 @@
       },
       "ranked": true,
       "overall": 36.0,
-      "rank": 311
+      "rank": 310
     },
     {
       "id": "anthracite-org/magnum-v4-72b",
@@ -9262,7 +9375,7 @@
       },
       "ranked": true,
       "overall": 35.9,
-      "rank": 312
+      "rank": 311
     },
     {
       "id": "openai/o1-pro",
@@ -9290,6 +9403,42 @@
       },
       "ranked": true,
       "overall": 35.6,
+      "rank": 312
+    },
+    {
+      "id": "meta-llama/llama-4-scout-17b-16e-instruct",
+      "label": "Meta: Llama 4 Scout",
+      "creator": "meta-llama",
+      "openrouter_ids": [
+        "meta-llama/llama-4-scout-17b-16e-instruct"
+      ],
+      "sources": {
+        "artificial_analysis": {
+          "raw": 8.07503439053102,
+          "normalized": 5.7
+        },
+        "openrouter": {
+          "raw": 88059582115,
+          "normalized": 73.5
+        },
+        "flexprice_tasks": {
+          "raw": 37.5,
+          "normalized": 0.0
+        }
+      },
+      "source_count": 3,
+      "metric_basis": {
+        "capability": "observed",
+        "preference": "derived",
+        "adoption": "observed"
+      },
+      "metrics": {
+        "capability": 5.7,
+        "preference": 76.0,
+        "adoption": 73.5
+      },
+      "ranked": true,
+      "overall": 35.4,
       "rank": 313
     },
     {
