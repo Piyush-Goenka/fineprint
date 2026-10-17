@@ -1,4 +1,7 @@
-"""FinePrint autopilot — detect new models on OpenRouter, benchmark, publish, announce.
+"""LEGACY paid benchmark autopilot — retained for manual legacy workflows only.
+
+Do not schedule this module for current model catalog/ranking updates. It runs paid evaluations
+against FinePrint's private corpus. Use ``python -m fineprint.market_data`` instead.
 
 One portable entrypoint, run on any scheduler (GitHub Actions cron, Modal, Railway/Render cron,
 a plain crontab):

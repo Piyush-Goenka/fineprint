@@ -11,7 +11,7 @@ export function SiteFooter() {
               <span className="wordmark inline text-[1em] leading-[1] text-text align-baseline">
                 FinePrint
               </span>{" "}
-              is the document-extraction benchmark by{" "}
+              is the model intelligence and document scanning project by{" "}
               <a
                 href={FLEXPRICE_URL}
                 target="_blank"
@@ -20,23 +20,21 @@ export function SiteFooter() {
               >
                 Flexprice
               </a>
-              . Every new model, scored on real contracts turned into structured billing data.
+              . FinePrint presents Flexprice Model Intelligence and lets you try contract extraction yourself.
             </p>
             <div
               className="my-4 border-t border-dotted border-line-2"
               aria-hidden
             />
             <p className="text-sm leading-relaxed text-muted">
-              FinePrint is open source. Clone the repo and run your own eval on whichever model you
-              prefer. Same harness as the leaderboard.
+              FinePrint is open source. Explore model capability, preference, and adoption, then scan a PDF in the live demo.
             </p>
           </div>
           {/* Two columns so the nav does not tower over the short left block and
               leave a void above the rule. */}
           <nav className="grid grid-cols-2 gap-x-12 gap-y-3 text-sm text-muted">
-            <Link href="/#leaderboard" className="hover:text-text transition-colors">Leaderboard</Link>
-            <Link href="/#analytics" className="hover:text-text transition-colors">Charts</Link>
-            <Link href="/compare" className="hover:text-text transition-colors">Compare</Link>
+            <Link href="/#leaderboard" className="hover:text-text transition-colors">Model rankings</Link>
+            <Link href="/compare" className="hover:text-text transition-colors">Compare models</Link>
             <Link href="/#inside" className="hover:text-text transition-colors">How we measure</Link>
             <Link href="/methodology" className="hover:text-text transition-colors">Methodology</Link>
             <a href={CONTACT_URL} target="_blank" rel="noopener noreferrer" className="hover:text-text transition-colors">Contact</a>
@@ -47,7 +45,7 @@ export function SiteFooter() {
           </nav>
         </div>
 
-        <p className="mt-10 pt-6 border-t border-line text-[12.5px] text-faint">Private hand-labeled holdout.</p>
+        <p className="mt-10 pt-6 border-t border-line text-[12.5px] text-faint">Flexprice metrics are directional and may change as model coverage grows.</p>
       </div>
 
       {/* Oversized wordmark bleeding off the base of the page. Decorative only.

@@ -2,12 +2,13 @@
   "name": "fineprint",
   "version": "0.1.0",
   "private": true,
-  "description": "FinePrint — the document-extraction benchmark. Every model, scored on real contracts.",
+  "description": "FinePrint — model rankings and a PDF extraction playground.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "market:refresh": "python3 -m fineprint.market_data"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",

@@ -6,7 +6,7 @@ const COLOR: Record<string, string> = {
   google: "google", gemini: "google",
   meta: "meta", "meta-llama": "meta",
   mistral: "mistral", mistralai: "mistral",
-  deepseek: "deepseek", qwen: "qwen",
+  deepseek: "deepseek", qwen: "qwen", xiaomi: "xiaomi", tencent: "tencent.png",
   cohere: "cohere", perplexity: "perplexity",
   // moonshot / kimi: theme-split assets below (black K on light, light K on dark)
   zhipu: "zhipu", "z-ai": "zhipu", glm: "zhipu",
@@ -18,7 +18,22 @@ const MONO: Record<string, string> = {
 };
 
 export function ProviderIcon({ brand, size = 17, className = "" }: { brand: string; size?: number; className?: string }) {
-  const b = brand?.toLowerCase();
+  const b = brand?.toLowerCase().trim().replace(/^~/, "");
+  if (b === "space-bunny") {
+    // Space Bunny is an anonymous OpenRouter model, so use its own model mark without
+    // assigning it to a real provider.
+    return (
+      <span aria-hidden="true" className={`inline-flex shrink-0 items-center justify-center rounded-full ${className}`}
+        style={{ width: size, height: size, background: "#7558d9", overflow: "hidden" }}>
+        <svg width={size * 0.78} height={size * 0.78} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M7.1 11.1C5.7 6.7 6.1 2.4 8.3 2.4c2.1 0 2.7 4.1 2.9 7.1m5.7 1.6c1.4-4.4 1-8.7-1.2-8.7-2.1 0-2.7 4.1-2.9 7.1" stroke="white" strokeWidth="2.1" strokeLinecap="round" />
+          <path d="M4.2 14.5c0-4 3.3-6.4 7.8-6.4s7.8 2.4 7.8 6.4-3.3 7-7.8 7-7.8-3-7.8-7Z" fill="white" />
+          <circle cx="9.2" cy="14.2" r=".9" fill="#49318d" /><circle cx="14.8" cy="14.2" r=".9" fill="#49318d" />
+          <path d="M11 16.2h2l-1 1.2-1-1.2Z" fill="#ef8b9f" />
+        </svg>
+      </span>
+    );
+  }
   // Kimi's mark uses a solid K — black on light, light on dark — so it needs both assets.
   if (b === "moonshot" || b === "moonshotai" || b === "kimi") {
     return (
@@ -36,7 +51,7 @@ export function ProviderIcon({ brand, size = 17, className = "" }: { brand: stri
   if (color) {
     // eslint-disable-next-line @next/next/no-img-element
     return (
-      <img src={`/icons/color/${color}.svg`} alt="" aria-hidden width={size} height={size}
+      <img src={`/icons/color/${color.includes(".") ? color : `${color}.svg`}`} alt="" aria-hidden width={size} height={size}
         className={`inline-block shrink-0 ${className}`} style={{ objectFit: "contain" }} />
     );
   }

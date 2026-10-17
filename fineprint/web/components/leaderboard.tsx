@@ -1,156 +1,79 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
-import { ModelRow, money, fmtValue } from "@/lib/data";
+import { useMemo, useState } from "react";
+import { marketData, type ExternalModel } from "@/lib/market-data";
 import { ProviderIcon } from "@/components/provider-icon";
+import Link from "next/link";
 
-type Col = { key: keyof ModelRow; label: string; render: (m: ModelRow) => React.ReactNode; num: boolean };
+const PREVIEW = 20;
+const metricValue = (model: ExternalModel, key: "capability" | "preference" | "adoption") => {
+  const value = model.metrics?.[key];
+  return value == null ? "—" : value.toFixed(1);
+};
+type SortKey = "rank" | "model" | "capability" | "preference" | "adoption" | "overall";
+const SORT_LABELS: Record<SortKey, string> = {
+  rank: "Rank", model: "Model", capability: "Capability", preference: "Preference", adoption: "Adoption", overall: "Flexprice Index",
+};
+const SORT_INFO: Partial<Record<SortKey, string>> = {
+  capability: "Published benchmark result, or a calibrated score from model features when a benchmark is unavailable.",
+  preference: "How often developers select the model, with Arena ratings included when available.",
+  adoption: "Monthly token volume processed through OpenRouter.",
+  overall: "Weighted score: 40% capability, 35% preference, and 25% adoption.",
+};
+const SOURCE_LABELS: Record<string, string> = { artificial_analysis: "Artificial Analysis", arena: "Arena", openrouter: "OpenRouter" };
 
-const PREVIEW = 15;
-
-const LinkArrow = () => (
-  <svg viewBox="0 0 24 24" aria-hidden fill="none" stroke="currentColor" strokeWidth="2"
-    strokeLinecap="round" strokeLinejoin="round"
-    className="size-3.5 shrink-0 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all">
-    <path d="M7 17 17 7M17 7H9M17 7v8" />
-  </svg>
-);
-
-const COLS: Col[] = [
-  { key: "rank", label: "#", num: true, render: (m) => <span className="text-faint tnum">{m.rank}</span> },
-  {
-    key: "label", label: "Model", num: false,
-    render: (m) => (
-      <Link href={`/models/${m.id}`} className="flex items-center gap-2.5 group w-fit">
-        <ProviderIcon brand={m.brand} />
-        <b className="font-medium group-hover:text-accent transition-colors">{m.label}</b>
-        {m.new && <span className="badge badge-new" style={{ padding: "1px 7px", fontSize: 11 }}>New</span>}
-        <span className="text-[11.5px] text-faint">{m.family}</span>
-        <LinkArrow />
-      </Link>
-    ),
-  },
-  {
-    key: "accuracy", label: "Accuracy", num: true,
-    render: (m) => (
-      <div className="relative inline-flex flex-col items-end">
-        <span className={`tnum ${m.rank === 1 ? "text-text font-medium" : ""}`}>{m.accuracy}%</span>
-        <span className="mt-1 h-[3px] w-16 rounded-full bg-line-2 overflow-hidden">
-          <span className="block h-full rounded-full" style={{ width: `${m.accuracy}%`, background: "var(--accent)" }} />
-        </span>
-      </div>
-    ),
-  },
-  { key: "extraction", label: "Extract", num: true, render: (m) => <span className="tnum" title="economic facts: dates, fee amounts, credits, overrides">{m.extraction}%</span> },
-  { key: "convention", label: "Conv.", num: true, render: (m) => <span className="tnum text-faint" title="house-convention fields: fee timing, period, credit type">{m.convention}%</span> },
-  { key: "halluc", label: "Halluc.", num: true, render: (m) => <span className="tnum">{m.halluc}%</span> },
-  { key: "cost_1k", label: "$/1k", num: true, render: (m) => <span className="tnum">{money(m.cost_1k)}</span> },
-  {
-    key: "value", label: "Value", num: true,
-    render: (m) => <span className="tnum" title="accuracy points per $/1k">{fmtValue(m.value)}</span>,
-  },
-  { key: "p50", label: "p50", num: true, render: (m) => <span className="tnum">{m.p50}s</span> },
-  { key: "reliability", label: "Valid", num: true, render: (m) => <span className="tnum text-faint">{m.reliability}%</span> },
-];
-
-export function Leaderboard({ models }: { models: ModelRow[] }) {
-  const [sortKey, setSortKey] = useState<keyof ModelRow>("accuracy");
-  const [asc, setAsc] = useState(false);
+export function Leaderboard() {
+  const [query, setQuery] = useState("");
   const [expanded, setExpanded] = useState(false);
-
-  const rows = [...models].sort((a, b) => {
-    const av = a[sortKey], bv = b[sortKey];
-    if (av == null || bv == null) {                 // NA (null cost/value) always sinks to the bottom
-      return av == bv ? 0 : av == null ? 1 : -1;
-    }
-    const cmp = typeof av === "number" && typeof bv === "number" ? av - bv : String(av).localeCompare(String(bv));
-    return asc ? cmp : -cmp;
-  });
-
-  const canCollapse = rows.length > PREVIEW;
-  // One peek row past the cut so the veil lands mid-16th and shows there's more.
-  const visible = expanded || !canCollapse ? rows : rows.slice(0, PREVIEW + 1);
-  const hidden = canCollapse && !expanded ? rows.length - PREVIEW : 0;
-
-  const onSort = (k: keyof ModelRow) => {
-    if (k === sortKey) setAsc(!asc);
-    else { setSortKey(k); setAsc(false); }
+  const [sort, setSort] = useState<SortKey>("rank");
+  const [direction, setDirection] = useState<"asc" | "desc">("asc");
+  const rows = useMemo(() => marketData.rows.filter((m) => `${m.label} ${m.creator}`.toLowerCase().includes(query.toLowerCase()))
+    .sort((a, b) => {
+      const av = sort === "model" ? a.label.toLowerCase() : sort === "rank" ? a.rank : sort === "overall" ? a.overall : a.metrics?.[sort];
+      const bv = sort === "model" ? b.label.toLowerCase() : sort === "rank" ? b.rank : sort === "overall" ? b.overall : b.metrics?.[sort];
+      if (av == null && bv != null) return 1;
+      if (av != null && bv == null) return -1;
+      const order = typeof av === "string" && typeof bv === "string" ? av.localeCompare(bv) : (Number(av ?? -Infinity) - Number(bv ?? -Infinity));
+      return (direction === "asc" ? order : -order) || (a.rank ?? Infinity) - (b.rank ?? Infinity);
+    }), [query, sort, direction]);
+  const visible = expanded ? rows : rows.slice(0, PREVIEW);
+  const sortHeader = (key: SortKey, align: "left" | "right") => {
+    const info = SORT_INFO[key];
+    const active = sort === key;
+    return <button type="button" onClick={() => { if (active) setDirection(direction === "asc" ? "desc" : "asc"); else { setSort(key); setDirection(key === "model" ? "asc" : "desc"); } }}
+      className={`inline-flex items-center gap-1 hover:text-text ${align === "right" ? "justify-end" : "justify-start"}`} aria-label={`Sort by ${SORT_LABELS[key]}${info ? `. ${info}` : ""}`}>
+      {SORT_LABELS[key]}{info && <span aria-hidden="true" className="normal-case text-faint" title={info}>ⓘ</span>}
+      <span aria-hidden="true" className="w-2 text-accent">{active ? direction === "asc" ? "↑" : "↓" : ""}</span>
+    </button>;
   };
 
   return (
-    <div className={`fp-lb${canCollapse && !expanded ? " fp-lb--collapsed" : ""}`}>
-      <div className="panel overflow-x-auto">
-        <table className="w-full text-sm border-collapse">
-          <thead>
-            <tr>
-              {COLS.map((c) => (
-                <th key={String(c.key)} onClick={() => onSort(c.key)}
-                  className={`px-4 py-3 text-[11px] font-medium uppercase tracking-[.07em] text-faint cursor-pointer hover:text-muted select-none whitespace-nowrap ${c.num ? "text-right" : "text-left"}`}>
-                  {c.label}
-                  {sortKey === c.key && (
-                    // Drawn, not typed: arrow glyphs fall back inconsistently across fonts.
-                    <svg viewBox="0 0 24 24" aria-hidden fill="none" stroke="currentColor" strokeWidth="2.5"
-                      strokeLinecap="round" strokeLinejoin="round"
-                      className={`inline-block size-3 ml-1 align-middle ${asc ? "rotate-180" : ""}`}>
-                      <path d="m6 9 6 6 6-6" />
-                    </svg>
-                  )}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {visible.map((m) => (
-              <tr key={m.id} className="border-t border-line hover:bg-surface-2/70 transition-colors">
-                {COLS.map((c) => (
-                  <td key={String(c.key)} className={`px-4 py-3 whitespace-nowrap ${c.num ? "text-right" : "text-left"}`}>
-                    {c.render(m)}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
+    <div>
+      <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-b border-line">
+        <div className="text-[12px] text-muted">Updated {new Date(marketData.as_of).toLocaleDateString()}</div>
+        <input aria-label="Search models" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search models…" className="rounded-lg border border-line bg-surface px-3 py-2 text-[12px] outline-none focus:border-accent" />
+      </div>
+      {marketData.source_errors && Object.keys(marketData.source_errors).length > 0 && <p className="px-4 py-2 text-[12px] text-warning">{Object.keys(marketData.source_errors).map((key) => SOURCE_LABELS[key] ?? key).join(" and ")} did not respond during this refresh.</p>}
+      <div className="overflow-x-auto">
+        <table className="w-full text-[12.5px]">
+          <thead><tr className="text-muted border-b border-line text-[11px] uppercase tracking-wide">
+            <th aria-sort={sort === "rank" || sort === "model" ? (direction === "asc" ? "ascending" : "descending") : "none"} className="text-left px-4 py-3">{sortHeader("rank", "left")}<span className="mx-1">/</span>{sortHeader("model", "left")}</th>
+            {(["capability", "preference", "adoption", "overall"] as const).map((key) => <th key={key} aria-sort={sort === key ? (direction === "asc" ? "ascending" : "descending") : "none"} className="text-right px-3 py-3">{sortHeader(key, "right")}</th>)}
+          </tr></thead>
+          <tbody>{visible.map((m: ExternalModel) => <tr key={m.id} className="border-b border-line/70 hover:bg-surface-2/50">
+            <td className="px-4 py-3"><span className="text-faint mr-3 tabular-nums">{m.rank ?? "—"}</span><span className="inline-flex items-center gap-2"><ProviderIcon brand={m.id.toLowerCase().includes("space-bunny") ? "space-bunny" : m.creator} size={17} /><Link href={`/models/${encodeURIComponent(m.id)}`} className="font-medium hover:text-accent">{m.label}</Link></span></td>
+            <td className="text-right px-3 py-3 tabular-nums">{metricValue(m, "capability")}</td>
+            <td className="text-right px-3 py-3 tabular-nums">{metricValue(m, "preference")}</td>
+            <td className="text-right px-3 py-3 tabular-nums">{metricValue(m, "adoption")}</td>
+            <td className="text-right px-4 py-3 font-semibold tabular-nums">
+              {m.overall == null ? "—" : m.overall.toFixed(1)}
+            </td>
+          </tr>)}</tbody>
         </table>
       </div>
-
-      {/* Meta sits under the table; when collapsed the veil paints over it. */}
-      <div className="fp-lb-meta">
-        <p className="text-[12px] text-faint">
-          Value = accuracy points per $/1k. Pricing from OpenRouter, updated continuously.
-        </p>
-        <span className="text-[12px] text-faint hidden sm:block">Click a column to sort.</span>
-      </div>
-
-      {canCollapse && !expanded && (
-        <div className="fp-lb-veil">
-          <button
-            type="button"
-            className="fp-lb-more-btn"
-            onClick={() => setExpanded(true)}
-            aria-label={`Show more, ${hidden} remaining`}
-          >
-            <span className="fp-lb-more-label">Show more</span>
-            <span className="fp-lb-more-count">{hidden} more</span>
-            <svg className="fp-lb-more-arrow" viewBox="0 0 24 24" width="16" height="16" aria-hidden fill="none"
-              stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round">
-              <path d="m6 9 6 6 6-6" />
-            </svg>
-          </button>
-        </div>
-      )}
-
-      {canCollapse && expanded && (
-        <div className="fp-lb-less">
-          <button type="button" className="fp-lb-more-btn" onClick={() => setExpanded(false)}>
-            <span className="fp-lb-more-label">Show less</span>
-            <svg className="fp-lb-more-arrow" viewBox="0 0 24 24" width="16" height="16" aria-hidden fill="none"
-              stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round">
-              <path d="m18 15-6-6-6 6" />
-            </svg>
-          </button>
-        </div>
-      )}
+      {!rows.length && <p className="p-8 text-center text-muted">No matching models.</p>}
+      {rows.length > PREVIEW && <button className="w-full py-3 text-[12px] text-accent hover:bg-surface-2/50" onClick={() => setExpanded(!expanded)}>{expanded ? "Show fewer models" : `Show all ${rows.length} models`}</button>}
+      <div className="px-4 py-3 border-t border-line text-[10.5px] leading-relaxed text-muted">Scores use a 0–100 scale and combine public benchmarks, model specifications, and developer activity. The Index describes the broader model landscape, not FinePrint contract-extraction accuracy. Read the <Link href="/methodology" className="text-accent hover:underline">methodology</Link>.</div>
     </div>
   );
 }

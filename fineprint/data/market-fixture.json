@@ -1,0 +1,25 @@
+{
+  "as_of": "2026-09-26T00:00:00Z",
+  "catalog": [
+    {"id":"openai/gpt-6-astra","canonical_slug":"openai/gpt-6-astra","name":"GPT-6 Astra","architecture":{"input_modalities":["text"],"output_modalities":["text"]}},
+    {"id":"anthropic/claude-opus-5","canonical_slug":"anthropic/claude-opus-5","name":"Claude Opus 5","architecture":{"input_modalities":["text"],"output_modalities":["text"]}},
+    {"id":"google/gemini-3.5-flash","canonical_slug":"google/gemini-3.5-flash","name":"Gemini 3.5 Flash","architecture":{"input_modalities":["text","image"],"output_modalities":["text"]}},
+    {"id":"qwen/qwen3.8-max","canonical_slug":"qwen/qwen3.8-max","name":"Qwen3.8 Max","architecture":{"input_modalities":["text"],"output_modalities":["text"]}},
+    {"id":"openai/gpt-image-2","canonical_slug":"openai/gpt-image-2","name":"GPT Image 2","architecture":{"input_modalities":["text"],"output_modalities":["image"]}}
+  ],
+  "usage": [
+    {"date":"2026-09-24","model_permaslug":"openai/gpt-6-astra","total_tokens":"1750000000000"},
+    {"date":"2026-09-24","model_permaslug":"anthropic/claude-opus-5","total_tokens":"1160000000000"},
+    {"date":"2026-09-24","model_permaslug":"qwen/qwen3.8-max","total_tokens":"386700000000"}
+  ],
+  "artificial_analysis": {
+    "gpt-6-astra":{"score":52.7,"label":"GPT-6 Astra"},
+    "claude-opus-5":{"score":50.8,"label":"Claude Opus 5"},
+    "gemini-3.5-flash":{"score":33.6,"label":"Gemini 3.5 Flash"},
+    "qwen3.8-max":{"score":45.4,"label":"Qwen3.8 Max"}
+  },
+  "arena": {
+    "claude-opus-5":{"score":1493,"votes":42617,"label":"Claude Opus 5"},
+    "gemini-3.5-flash":{"score":1500,"votes":2622,"label":"Gemini 3.5 Flash"}
+  }
+}

@@ -9,12 +9,26 @@ import { ContractViewer } from "@/components/contract-viewer";
 import { OutputPanel } from "@/components/output-panel";
 import { ModelPicker } from "@/components/model-picker";
 import { EmailGate } from "@/components/email-gate";
-import { byId } from "@/lib/data";
+import { marketData } from "@/lib/market-data";
 
-// Shortlist offered in the playground (ids match the backend PLAYGROUND_MODELS). Names + logos
-// are resolved from the published board (lib/data) inside ModelPicker — no rank/price here.
-const PLAYGROUND_MODEL_IDS = ["gpt-5.5", "claude-fable-5", "grok-4.6", "gemini-3.5-flash-lite", "gpt-5.6-luna", "deepseek-v3.2"];
-const DEFAULT_MODEL = PLAYGROUND_MODEL_IDS[0];
+// Live catalog cached in the last local/site data refresh. Includes every text-in/text-out model.
+const PLAYGROUND_MODELS = marketData.catalog.length ? marketData.catalog : [
+  { id: "openai/gpt-5.5", label: "GPT-5.5", creator: "openai", openrouter_ids: ["openai/gpt-5.5"] },
+  { id: "anthropic/claude-fable-5", label: "Claude Fable 5", creator: "anthropic", openrouter_ids: ["anthropic/claude-fable-5"] },
+  { id: "x-ai/grok-4.6", label: "Grok 4.6", creator: "x-ai", openrouter_ids: ["x-ai/grok-4.6"] },
+  { id: "google/gemini-3.5-flash-lite", label: "Gemini 3.5 Flash Lite", creator: "google", openrouter_ids: ["google/gemini-3.5-flash-lite"] },
+  { id: "openai/gpt-5.6-luna", label: "GPT-5.6 Luna", creator: "openai", openrouter_ids: ["openai/gpt-5.6-luna"] },
+  { id: "deepseek/deepseek-v3.2", label: "DeepSeek V3.2", creator: "deepseek", openrouter_ids: ["deepseek/deepseek-v3.2"] },
+];
+const LEGACY_MODEL_IDS: Record<string, string> = {
+  "openai/gpt-5.5": "gpt-5.5",
+  "anthropic/claude-fable-5": "claude-fable-5",
+  "x-ai/grok-4.6": "grok-4.6",
+  "google/gemini-3.5-flash-lite": "gemini-3.5-flash-lite",
+  "openai/gpt-5.6-luna": "gpt-5.6-luna",
+  "deepseek/deepseek-v3.2": "deepseek-v3.2",
+};
+const DEFAULT_MODEL = PLAYGROUND_MODELS.find((m) => m.id === "openai/gpt-5.5")?.id ?? PLAYGROUND_MODELS[0].id;
 const GUIDEWIRE_ID = samples[0].id; // "guidewire"
 // Team feedback: MSA reads cleaner as the first thing people see than the license agreement.
 const DEFAULT_SAMPLE_ID = "msa";
@@ -48,6 +62,7 @@ function holdForReportedLatency(startedAt: number, latencySeconds: number) {
 }
 
 export function Playground() {
+  const [availableModels, setAvailableModels] = useState(PLAYGROUND_MODELS);
   const [mode, setMode] = useState<"sample" | "upload">("sample");
   const [sampleId, setSampleId] = useState(DEFAULT_SAMPLE_ID);
   const [model, setModel] = useState(DEFAULT_MODEL);
@@ -71,6 +86,9 @@ export function Playground() {
   const catalog = samples as SampleMeta[];
 
   useEffect(() => {
+    fetch("/api/models").then((r) => r.ok ? r.json() : null)
+      .then((payload) => { if (payload?.models?.length) setAvailableModels(payload.models); })
+      .catch(() => {});
     // Warm the availability probe so a live backend can serve previews; chips don't wait on it.
     fetchAvailableSamples().catch(() => {});
     if (!isGuidewireDefault) {
@@ -113,7 +131,7 @@ export function Playground() {
         // sits out its own reported latency so the number on screen is the wait you felt.
         const res = sampleId === GUIDEWIRE_ID && model === DEFAULT_MODEL
           ? GUIDEWIRE
-          : await runExtract({ sampleId, model });
+          : await runExtract({ sampleId, model: LEGACY_MODEL_IDS[model] ?? model });
         await holdForReportedLatency(startedAt, res.latency);
         if (reqId.current !== req) return;
         setResult(res); setPages(res.pages); setRevealed(true); setStatus("");
@@ -131,7 +149,7 @@ export function Playground() {
     const startedAt = performance.now();
     setStatus("running");
     try {
-      const res = await runExtract({ file, model, sessionToken: activeToken });
+      const res = await runExtract({ file, model: LEGACY_MODEL_IDS[model] ?? model, sessionToken: activeToken });
       await holdForReportedLatency(startedAt, res.latency);
       if (reqId.current !== req) return;
       setResult(res); setPages(res.pages); setRevealed(true); setStatus("");
@@ -170,7 +188,7 @@ export function Playground() {
           </div>
         </div>
         <div className="flex flex-wrap items-center justify-start sm:justify-end gap-2.5 w-full">
-          <ModelPicker ids={PLAYGROUND_MODEL_IDS} value={model} onChange={setModel} />
+          <ModelPicker models={availableModels} value={model} onChange={setModel} />
           <button onClick={() => run()} disabled={running}
             className="bg-primary text-bg rounded-xl px-5 py-2.5 text-[13.5px] font-bold disabled:opacity-60 whitespace-nowrap w-full sm:w-auto">
             {running ? "Reading…" : revealed ? "Re-run" : "Run extraction"}</button>
@@ -184,7 +202,7 @@ export function Playground() {
           mode={mode} file={file} onFile={(f) => { setFile(f); setErr(""); }}
           loading={loadingPages} source={mode === "upload" ? "Your document" : sourceOf(sampleId)} />
         <OutputPanel result={result} revealed={revealed} running={running}
-          model={byId(model)?.label ?? model} hot={hot} setHot={setHot} />
+          model={availableModels.find((m) => m.id === model)?.label ?? model} hot={hot} setHot={setHot} />
       </div>
 
       {err && <p className="mt-3 text-[13px] text-warning">{err}</p>}

@@ -9,12 +9,12 @@ const sans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 // Homemade Apple — the FinePrint wordmark only, never body copy.
 const wordmark = Homemade_Apple({ variable: "--font-wordmark", subsets: ["latin"], weight: "400" });
 
-const TITLE = "FinePrint: the document-extraction benchmark";
+const TITLE = "FinePrint: Flexprice Model Intelligence and contract extraction";
 const DESCRIPTION =
-  "Can it actually read the contract? Every new model, scored on real-world documents turned into structured data. Private test set. Updated the day a model ships.";
+  "Flexprice Model Intelligence: model capability, preference, and adoption metrics alongside a live contract extraction scan.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://fineprint.bench"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://fineprint.flexprice.io"),
   title: { default: TITLE, template: "%s · FinePrint" },
   description: DESCRIPTION,
   applicationName: "FinePrint",
