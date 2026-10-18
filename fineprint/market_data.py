@@ -16,6 +16,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 DEFAULT_OUTPUT = HERE / "web" / "lib" / "market-data.json"
+FLEXPRICE_TASKS_PATH = HERE / "data" / "flexprice-tasks.json"
 OPENROUTER_MODELS = "https://openrouter.ai/api/v1/models"
 OPENROUTER_RANKINGS = "https://openrouter.ai/rankings"
 OPENROUTER_RANKINGS_FEED = "https://openrouter.ai/api/frontend/v1/rankings/models?view=month"
@@ -28,6 +29,7 @@ SOURCES = {
     "openrouter_catalog": {"label": "OpenRouter model catalog", "url": OPENROUTER_MODELS},
 }
 WEIGHTS = {"capability": 0.40, "preference": 0.35, "adoption": 0.25}
+TASK_WEIGHTS = {"capability": 0.30, "preference": 0.25, "adoption": 0.20, "flexprice_tasks": 0.25}
 
 FLEX_METRICS = {
     "intelligence": {"label": "Capability", "unit": "points", "higher_is_better": True},
@@ -35,6 +37,25 @@ FLEX_METRICS = {
     "adoption": {"label": "Adoption", "unit": "/ 100", "higher_is_better": True},
     "overall": {"label": "Flexprice Index", "unit": "/ 100", "higher_is_better": True},
 }
+
+
+def build_methodology() -> dict:
+    """Describe both Index formulas without changing the score calculation."""
+    def formula(weights: dict[str, float]) -> str:
+        labels = {"flexprice_tasks": "Flexprice tasks"}
+        return " + ".join(f"{weight * 100:g}% {labels.get(name, name)}" for name, weight in weights.items())
+
+    return {
+        "weights": WEIGHTS,
+        "task_weights": TASK_WEIGHTS,
+        "weight_selection": "Use task_weights when a model has sources.flexprice_tasks; otherwise use weights.",
+        "index_description": f"Models with Flexprice task results: {formula(TASK_WEIGHTS)}. Models without task results: {formula(WEIGHTS)}.",
+        "normalization": "Capability uses the Artificial Analysis Intelligence Index when published, otherwise a catalog-feature estimate calibrated against benchmarked models with a 10-point text capability floor. Preference combines Arena ratings (70%) and developer request activity (30%) where Arena is available; otherwise it uses request activity. Adoption is log-scaled OpenRouter token volume. Models with no published usage receive zero for request activity and adoption.",
+        "task_normalization": "The local Flexprice task composite is 0.35 × accuracy + 0.30 × extraction + 0.20 × convention + 0.15 × max(0, 100 − hallucination) − 0.20 × consistency, clamped to 0–100 and rounded to one decimal. With two or more matched models, composites are min-max normalized to 0–100; if all composites are equal, they normalize to 100. A single matched model keeps its composite score. The Index uses this normalized task score.",
+        "metrics": FLEX_METRICS,
+        "attribution": SOURCES,
+        "caveat": "Flexprice Index combines public signals with local task results where available. It is not a standalone contract-extraction accuracy score and does not imply that every model has Flexprice task results.",
+    }
 
 
 def fetch_json(url: str, token: str | None = None) -> dict:
@@ -196,6 +217,49 @@ def _clamp(value: float) -> float:
     return max(0.0, min(100.0, value))
 
 
+def flexprice_task_score(entry: dict) -> float:
+    """Compute a 0–100 composite score from locally evaluated FinePrint task metrics."""
+    accuracy = float(entry.get("accuracy", 0.0))
+    extraction = float(entry.get("extraction", accuracy))
+    convention = float(entry.get("convention", accuracy))
+    halluc = float(entry.get("halluc", 0.0))
+    consistency = float(entry.get("consistency", 0.0))
+    raw = (
+        0.35 * accuracy
+        + 0.30 * extraction
+        + 0.20 * convention
+        + 0.15 * max(0.0, 100.0 - halluc)
+        - 0.20 * consistency
+    )
+    return round(_clamp(raw), 1)
+
+
+def load_flexprice_tasks(path: Path = FLEXPRICE_TASKS_PATH) -> dict[str, dict]:
+    """Load local Flexprice task scores keyed by normalized model ID."""
+    if not path.exists():
+        return {}
+    try:
+        payload = json.loads(path.read_text())
+    except (OSError, json.JSONDecodeError):
+        return {}
+    entries = payload.get("models", payload) if isinstance(payload, dict) else {}
+    if not isinstance(entries, dict):
+        return {}
+    rows: dict[str, dict] = {}
+    for raw_key, entry in entries.items():
+        if not isinstance(entry, dict) or "accuracy" not in entry:
+            continue
+        key = normalize(str(raw_key))
+        if not key:
+            continue
+        score = flexprice_task_score(entry)
+        old = rows.get(key)
+        if old is None or score > old["score"]:
+            rows[key] = {"score": score, "label": entry.get("label") or str(raw_key)}
+    return rows
+
+
+
 def catalog_capability(item: dict) -> float:
     """A fixed, reproducible feature envelope from public model-card fields."""
     params = set(item.get("supported_parameters") or [])
@@ -227,7 +291,8 @@ def _capability_calibration(profiles: dict[str, float], aa: dict[str, dict], aa_
     return lambda profile: _clamp(mean_y + slope * (profile - mean_x))
 
 
-def build(catalog: list[dict], usage_data: list[dict], aa: dict[str, dict], arena: dict[str, dict], as_of: str) -> dict:
+def build(catalog: list[dict], usage_data: list[dict], aa: dict[str, dict], arena: dict[str, dict], as_of: str,
+          flexprice_tasks: dict[str, dict] | None = None) -> dict:
     usage: dict[str, int] = {}
     requests: dict[str, int] = {}
     usage_labels: dict[str, str] = {}
@@ -287,9 +352,15 @@ def build(catalog: list[dict], usage_data: list[dict], aa: dict[str, dict], aren
 
     aa = map_records(aa)
     arena = map_records(arena)
+    tasks = map_records(flexprice_tasks or {})
 
     aa_norm = _minmax([v["score"] for v in aa.values()]) if aa else {}
     arena_norm = _minmax([v["score"] for v in arena.values()]) if arena else {}
+    tasks_norm = (
+        _minmax([v["score"] for v in tasks.values()])
+        if len(tasks) >= 2
+        else {v["score"]: round(_clamp(float(v["score"])), 1) for v in tasks.values()}
+    )
     # Log-scaling keeps heavy-tail usage from dominating the relative 0–100 range.
     usage_norm = _minmax([float(v) for v in usage.values()], log=True) if usage else {}
     usage_records = {k: {"score": v, "label": usage_labels[k]} for k, v in usage.items()}
@@ -299,7 +370,10 @@ def build(catalog: list[dict], usage_data: list[dict], aa: dict[str, dict], aren
     profiles = {key: catalog_capability(item) for key, item in catalog_items.items()}
     estimate_capability = _capability_calibration(profiles, aa, aa_norm)
     source_maps = {
-        "artificial_analysis": (aa, aa_norm), "arena": (arena, arena_norm), "openrouter": (usage_records, usage_norm),
+        "artificial_analysis": (aa, aa_norm),
+        "arena": (arena, arena_norm),
+        "openrouter": (usage_records, usage_norm),
+        "flexprice_tasks": (tasks, tasks_norm),
     }
     result_rows = []
     for key, model in models.items():
@@ -312,6 +386,7 @@ def build(catalog: list[dict], usage_data: list[dict], aa: dict[str, dict], aren
         model["source_count"] = len(model["sources"])
         benchmark = model["sources"].get("artificial_analysis", {}).get("normalized")
         arena_rating = model["sources"].get("arena", {}).get("normalized")
+        task_score = model["sources"].get("flexprice_tasks", {}).get("normalized")
         usage_record = usage_records.get(key)
         request_count = request_records.get(key, {}).get("score", 0)
         request_score = request_norm.get(float(request_count), 0.0)
@@ -327,7 +402,16 @@ def build(catalog: list[dict], usage_data: list[dict], aa: dict[str, dict], aren
         }
         model["metrics"] = {"capability": round(capability, 1), "preference": round(preference, 1), "adoption": round(adoption, 1)}
         model["ranked"] = True
-        model["overall"] = round(sum(model["metrics"][name] * weight for name, weight in WEIGHTS.items()), 1)
+        if task_score is not None:
+            model["overall"] = round(
+                model["metrics"]["capability"] * TASK_WEIGHTS["capability"]
+                + model["metrics"]["preference"] * TASK_WEIGHTS["preference"]
+                + model["metrics"]["adoption"] * TASK_WEIGHTS["adoption"]
+                + round(task_score, 1) * TASK_WEIGHTS["flexprice_tasks"],
+                1,
+            )
+        else:
+            model["overall"] = round(sum(model["metrics"][name] * weight for name, weight in WEIGHTS.items()), 1)
         result_rows.append(model)
     result_rows.sort(key=lambda row: (-row["overall"], row["label"].lower()))
     rank = 0
@@ -336,7 +420,7 @@ def build(catalog: list[dict], usage_data: list[dict], aa: dict[str, dict], aren
         row["rank"] = rank
     return {
         "schema_version": 4, "as_of": as_of, "window": "Public monthly model usage and current ranking signals",
-        "methodology": {"weights": WEIGHTS, "normalization": "Capability uses the Artificial Analysis Intelligence Index when published, otherwise a catalog-feature estimate calibrated against benchmarked models with a 10-point text capability floor. Preference combines Arena ratings (70%) and developer request activity (30%) where Arena is available; otherwise it uses request activity. Adoption is log-scaled OpenRouter token volume. Models with no published usage receive zero for request activity and adoption.", "metrics": FLEX_METRICS, "attribution": SOURCES, "caveat": "Flexprice Index is a relative composite of published benchmark scores and reproducible derived metrics. It does not measure FinePrint contract-extraction accuracy or claim that every model has been independently evaluated."},
+        "methodology": build_methodology(),
         "sources": SOURCES, "n_models": len(result_rows), "n_ranked": sum(row["ranked"] for row in result_rows), "rows": result_rows,
         "catalog": sorted(({"id": m["id"], "label": m["label"], "creator": m["creator"], "openrouter_ids": m["openrouter_ids"]} for m in picker_models.values()), key=lambda m: m["label"].lower()),
     }
@@ -344,15 +428,17 @@ def build(catalog: list[dict], usage_data: list[dict], aa: dict[str, dict], aren
 
 def sync(output: Path = DEFAULT_OUTPUT, offline: bool = False,
          fixture_path: Path | None = None, catalog_only: bool = False,
-         catalog_path: Path | None = None) -> dict:
+         catalog_path: Path | None = None, tasks_path: Path = FLEXPRICE_TASKS_PATH) -> dict:
     """Fetch sources and write JSON. --offline expects a fixture bundle for repeatable local review."""
+    flexprice_tasks = load_flexprice_tasks(tasks_path)
     if offline:
         fixture = json.loads((fixture_path or HERE / "data" / "market-fixture.json").read_text())
         catalog = fixture["catalog"]
         if catalog_path:
             catalog_snapshot = json.loads(catalog_path.read_text())
             catalog = [{"id": item["id"], "canonical_slug": item["id"], "name": item["label"], "architecture": {"input_modalities": ["text"], "output_modalities": ["text"]}} for item in catalog_snapshot["catalog"]]
-        payload = build(catalog, fixture["usage"], fixture["artificial_analysis"], fixture["arena"], fixture["as_of"])
+        payload = build(catalog, fixture["usage"], fixture["artificial_analysis"], fixture["arena"], fixture["as_of"],
+                        flexprice_tasks=flexprice_tasks)
         if catalog_path:
             payload["window"] = "Local preview fixture; full OpenRouter catalog refreshed separately"
             payload["preview_fixture"] = True
@@ -387,7 +473,8 @@ def sync(output: Path = DEFAULT_OUTPUT, offline: bool = False,
                 failures["openrouter"] = f"Feed: {feed_exc}; page: {page_exc}"
         if failures or len(usage_data) < 100 or len(aa) < 40 or len(arena) < 30:
             raise RuntimeError(f"Ranking inputs are incomplete; keeping the previous published snapshot. Coverage: OpenRouter {len(usage_data)}, Artificial Analysis {len(aa)}, Arena {len(arena)}. Errors: {failures}")
-        payload = build(catalog_payload.get("data", []), usage_data, aa, arena, as_of)
+        payload = build(catalog_payload.get("data", []), usage_data, aa, arena, as_of,
+                        flexprice_tasks=flexprice_tasks)
         payload["source_errors"] = failures
         payload["openrouter_usage_coverage"] = len(usage_data)
         payload["window"] = "OpenRouter public monthly usage and current public model signals"

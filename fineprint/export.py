@@ -7,12 +7,40 @@ contract identities — so nothing private leaves the harness. Raw ``runs.json``
 """
 import json
 import os
-
+from pathlib import Path
 from statistics import mean
 
 from fineprint.config import all_models, SEED_CONTRACTS, N_RUNS, RESULTS, WEB_DATA, BASELINE_ID
 from fineprint.aggregate import aggregate, load_runs, pct
 from fineprint import pricing
+
+FLEXPRICE_TASKS = Path(__file__).resolve().parent / "data" / "flexprice-tasks.json"
+
+
+def sync_flexprice_tasks(rows: list[dict], path: Path | None = None) -> dict:
+    """Upsert evaluated model task metrics into fineprint/data/flexprice-tasks.json."""
+    target = path or FLEXPRICE_TASKS
+    try:
+        store = json.loads(target.read_text()) if target.exists() else {}
+    except (OSError, json.JSONDecodeError):
+        store = {}
+    for row in rows:
+        model_id = row.get("id")
+        if not model_id or "accuracy" not in row:
+            continue
+        acc = float(row["accuracy"])
+        store[model_id] = {
+            "label": row.get("label") or model_id,
+            "accuracy": round(acc, 1),
+            "extraction": round(float(row.get("extraction", acc)), 1),
+            "convention": round(float(row.get("convention", acc)), 1),
+            "halluc": round(float(row.get("halluc", 0.0)), 1),
+            "consistency": round(float(row.get("consistency", 0.0)), 1),
+        }
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(json.dumps(store, indent=2) + "\n")
+    return store
+
 
 # A model whose calls mostly FAILED still aggregates into a row: ``aggregate`` scores whatever
 # handful of calls survived and gates only on there being at least one. That is a failed
@@ -99,6 +127,7 @@ def build() -> dict:
     }
     WEB_DATA.parent.mkdir(parents=True, exist_ok=True)
     WEB_DATA.write_text(json.dumps(data, indent=2))
+    sync_flexprice_tasks(rows)
     print(f"wrote {WEB_DATA} — {len(rows)} models, {stats['total_judgments']} field judgments")
     return data
 
@@ -146,6 +175,7 @@ def add_model(model_id: str) -> dict | None:
     board["n_models"] = len(merged)
     board["newest_id"] = model_id
     WEB_DATA.write_text(json.dumps(board, indent=2))
+    sync_flexprice_tasks([new])
     print(f"published {model_id} -> rank #{new['rank']} of {len(merged)} (other rows untouched)")
     return board
 

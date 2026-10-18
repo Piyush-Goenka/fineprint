@@ -59,6 +59,39 @@ class MarketNotificationTests(unittest.TestCase):
             thread.join()
             server.server_close()
 
+    def test_flexprice_task_scores_adjust_overall_index_when_present(self):
+        from fineprint.market_data import flexprice_task_score
+        catalog = [
+            {"id": "anthropic/claude-opus-5", "name": "Claude Opus 5", "architecture": {"input_modalities": ["text"], "output_modalities": ["text"]}},
+            {"id": "openai/gpt-6-astra", "name": "GPT-6 Astra", "architecture": {"input_modalities": ["text"], "output_modalities": ["text"]}},
+        ]
+        usage = [
+            {"model_permaslug": "anthropic/claude-opus-5", "total_tokens": 1000, "count": 100},
+            {"model_permaslug": "openai/gpt-6-astra", "total_tokens": 1000, "count": 100},
+        ]
+        aa = {
+            "claude-opus-5": {"score": 50.0, "label": "Claude Opus 5"},
+            "gpt-6-astra": {"score": 50.0, "label": "GPT-6 Astra"},
+        }
+        arena = {
+            "claude-opus-5": {"score": 1500.0, "label": "Claude Opus 5"},
+            "gpt-6-astra": {"score": 1500.0, "label": "GPT-6 Astra"},
+        }
+        tasks = {
+            "claude-opus-5": {
+                "score": flexprice_task_score({
+                    "accuracy": 70.0, "extraction": 68.0, "convention": 72.0, "halluc": 10.0, "consistency": 2.0
+                }),
+                "label": "Claude Opus 5",
+            }
+        }
+        snapshot = build(catalog, usage, aa, arena, "2026-10-05T00:00:00Z", flexprice_tasks=tasks)
+        by_id = {row["id"]: row for row in snapshot["rows"]}
+        self.assertIn("flexprice_tasks", by_id["anthropic/claude-opus-5"]["sources"])
+        self.assertNotIn("flexprice_tasks", by_id["openai/gpt-6-astra"]["sources"])
+        self.assertEqual(by_id["openai/gpt-6-astra"]["overall"], 100.0)
+        self.assertLess(by_id["anthropic/claude-opus-5"]["overall"], 100.0)
+
 
 if __name__ == "__main__":
     unittest.main()
